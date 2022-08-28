@@ -9,8 +9,8 @@ import (
 	"net/http"
 )
 
-//PutHandler принимает в теле запроса строку URL для сокращения и
-//возвращает ответ с кодом 201 и сокращённым URL в виде текстовой строки в теле.
+// PutHandler принимает в теле запроса строку URL для сокращения и
+// возвращает ответ с кодом 201 и сокращённым URL в виде текстовой строки в теле.
 func PutHandler(c *gin.Context) {
 	bytesUrl, err := io.ReadAll(c.Request.Body)
 	if err != nil {
@@ -18,14 +18,14 @@ func PutHandler(c *gin.Context) {
 		http.Error(c.Writer, "Ошибка обработки тела запроса", http.StatusInternalServerError)
 		return
 	}
-	if !utils.ValidatorUrl(string(bytesUrl)) {
+	if !utils.ValidatorURL(string(bytesUrl)) {
 		http.Error(c.Writer, "Ошибка ссылка не валидна", http.StatusBadRequest)
 		return
 	}
 	var key string
 	//Подбираем уникальный ключ
 	for {
-		key = utils.GeneratorStringUuid()
+		key = utils.GeneratorStringUUID()
 		get, err := constans.GlobalStorage.Get(key)
 		if err != nil {
 			log.Println("Ошибка получение данных из хранилища ", c.Request.URL, err.Error())

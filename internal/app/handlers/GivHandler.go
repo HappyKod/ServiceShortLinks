@@ -7,9 +7,9 @@ import (
 	"net/http"
 )
 
-//GivHandler
-//Эндпоинт GET /{id} принимает в качестве URL-параметра идентификатор сокращённого URL
-//и возвращает ответ с кодом 307 и оригинальным URL в HTTP-заголовке Location
+// GivHandler
+// Эндпоинт GET /{id} принимает в качестве URL-параметра идентификатор сокращённого URL
+// и возвращает ответ с кодом 307 и оригинальным URL в HTTP-заголовке Location
 func GivHandler(c *gin.Context) {
 	key := c.Param("id")
 	if key == "" {
@@ -29,5 +29,4 @@ func GivHandler(c *gin.Context) {
 	c.Writer.Header().Set("Location", get)
 	c.Writer.WriteHeader(http.StatusTemporaryRedirect)
 	log.Println("Данные получены по ", c.Request.URL, get)
-	return
 }

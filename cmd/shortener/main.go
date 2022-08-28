@@ -4,7 +4,7 @@ import (
 	"ServiceShortLinks/internal/app/handlers"
 	"ServiceShortLinks/internal/app/server"
 	"ServiceShortLinks/internal/constans"
-	mem_storage "ServiceShortLinks/internal/storage/mem-storage"
+	mem_storage "ServiceShortLinks/internal/storage/MemStorage"
 	"errors"
 	"log"
 )
