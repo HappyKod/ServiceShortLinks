@@ -19,6 +19,7 @@ func PutHandler(c *gin.Context) {
 		http.Error(c.Writer, "Ошибка обработки тела запроса", http.StatusInternalServerError)
 		return
 	}
+	defer c.Request.Body.Close()
 	if !utils.ValidatorURL(string(bytesUrl)) {
 		http.Error(c.Writer, "Ошибка ссылка не валидна", http.StatusBadRequest)
 		return
