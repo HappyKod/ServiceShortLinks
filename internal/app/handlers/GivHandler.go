@@ -16,6 +16,7 @@ func GivHandler(c *gin.Context) {
 		http.Error(c.Writer, "Ошибка задан пустой id", http.StatusBadRequest)
 		return
 	}
+	log.Println("Получен запрос на извелечение url", c.Request.URL, key)
 	get, err := constans.GlobalStorage.Get(key)
 	if err != nil {
 		log.Println("Ошибка получение данных из хранилища ", c.Request.URL, err.Error())

@@ -13,6 +13,7 @@ import (
 // возвращает ответ с кодом 201 и сокращённым URL в виде текстовой строки в теле.
 func PutHandler(c *gin.Context) {
 	bytesUrl, err := io.ReadAll(c.Request.Body)
+	log.Println("Получен запрос на добавление url ", string(bytesUrl))
 	if err != nil {
 		log.Println("Ошибка обработки тела запроса ", c.Request.URL, err.Error())
 		http.Error(c.Writer, "Ошибка обработки тела запроса", http.StatusInternalServerError)
@@ -26,6 +27,7 @@ func PutHandler(c *gin.Context) {
 	//Подбираем уникальный ключ
 	for {
 		key = utils.GeneratorStringUUID()
+		log.Println("Сгенерирован ключ ", key, "для ", bytesUrl)
 		get, err := constans.GlobalStorage.Get(key)
 		if err != nil {
 			log.Println("Ошибка получение данных из хранилища ", c.Request.URL, err.Error())
@@ -46,5 +48,4 @@ func PutHandler(c *gin.Context) {
 		log.Println("Ошибка генерации Body ", c.Request.URL, string(bytesUrl), key, err.Error())
 		http.Error(c.Writer, "Ошибка генерации Body", http.StatusInternalServerError)
 	}
-	return
 }
