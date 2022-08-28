@@ -45,7 +45,7 @@ func PutHandler(c *gin.Context) {
 		return
 	}
 	c.Writer.WriteHeader(http.StatusCreated)
-	_, err = c.Writer.WriteString(path.Join(constans.Adres, key))
+	_, err = c.Writer.WriteString("http://" + path.Join(constans.Adres, key))
 	if err != nil {
 		log.Println("Ошибка генерации Body ", c.Request.URL, string(bytesURL), key, err.Error())
 		http.Error(c.Writer, "Ошибка генерации Body", http.StatusInternalServerError)
