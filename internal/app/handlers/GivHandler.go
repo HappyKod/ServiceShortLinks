@@ -27,7 +27,8 @@ func GivHandler(c *gin.Context) {
 		http.Error(c.Writer, "Ошибка по ключу ничего не нашлось", http.StatusBadRequest)
 		return
 	}
-	c.Writer.Header().Set("Location", get)
+	c.Writer.Header().Set("Content-Type", "text/plain")
+	c.Writer.Header().Add("Location", get)
 	c.Writer.WriteHeader(http.StatusTemporaryRedirect)
 	log.Println("Данные получены по ", c.Request.URL, get)
 }

@@ -27,7 +27,7 @@ func PutHandler(c *gin.Context) {
 	//Подбираем уникальный ключ
 	for {
 		key = utils.GeneratorStringUUID()
-		log.Println("Сгенерирован ключ ", key, "для ", bytesUrl)
+		log.Println("Сгенерирован ключ ", key, "для ", string(bytesUrl))
 		get, err := constans.GlobalStorage.Get(key)
 		if err != nil {
 			log.Println("Ошибка получение данных из хранилища ", c.Request.URL, err.Error())
