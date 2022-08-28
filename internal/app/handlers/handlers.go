@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"ServiceShortLinks/internal/constans"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -12,7 +13,7 @@ func Router() *http.Server {
 	r.POST("/", func(context *gin.Context) { PutHandler(context) })
 	server := http.Server{
 		Handler: r,
-		Addr:    "localhost:8080",
+		Addr:    constans.Adres,
 	}
 	return &server
 }

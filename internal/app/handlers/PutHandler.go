@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"path"
 )
 
 // PutHandler принимает в теле запроса строку URL для сокращения и
@@ -44,7 +45,7 @@ func PutHandler(c *gin.Context) {
 		return
 	}
 	c.Writer.WriteHeader(http.StatusCreated)
-	_, err = c.Writer.WriteString(key)
+	_, err = c.Writer.WriteString(path.Join("http://", constans.Adres, key))
 	if err != nil {
 		log.Println("Ошибка генерации Body ", c.Request.URL, string(bytesURL), key, err.Error())
 		http.Error(c.Writer, "Ошибка генерации Body", http.StatusInternalServerError)
