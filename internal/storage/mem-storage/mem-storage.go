@@ -12,11 +12,9 @@ type MemStorage struct {
 }
 
 //Init иницилизация хранилища
-func (MS MemStorage) Init() error {
-	MS.Connect = &connect{
-		cache: make(map[string]string),
-	}
-	return nil
+func Init() (*connect, error) {
+	return &connect{
+		cache: make(map[string]string)}, nil
 }
 
 //Ping проверка харнилища
