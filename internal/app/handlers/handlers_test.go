@@ -79,9 +79,7 @@ func TestGivHandler(t *testing.T) {
 			assert.Equal(t, constans.GlobalStorage.Put(tt.keyInit, tt.want.responseLocation), nil)
 			router := Router()
 			w := httptest.NewRecorder()
-			var req *http.Request
-
-			req = httptest.NewRequest(tt.requestMethod, tt.requestPath+tt.key, nil)
+			req := httptest.NewRequest(tt.requestMethod, tt.requestPath+tt.key, nil)
 			router.ServeHTTP(w, req)
 			assert.Equal(t, tt.want.responseCode, w.Code)
 			if w.Code == 307 {
@@ -144,8 +142,7 @@ func TestPutHandler(t *testing.T) {
 
 			router := Router()
 			w := httptest.NewRecorder()
-			var req *http.Request
-			req = httptest.NewRequest(tt.requestMethod, tt.requestPath, bytes.NewBuffer([]byte(tt.requestBody)))
+			req := httptest.NewRequest(tt.requestMethod, tt.requestPath, bytes.NewBuffer([]byte(tt.requestBody)))
 			router.ServeHTTP(w, req)
 			assert.Equal(t, tt.want.responseCode, w.Code)
 		})
