@@ -4,18 +4,18 @@ import (
 	"ServiceShortLinks/internal/app/handlers"
 	"ServiceShortLinks/internal/app/server"
 	"ServiceShortLinks/internal/constans"
-	mem_storage "ServiceShortLinks/internal/storage/memstorage"
+	"ServiceShortLinks/internal/storage/memstorage"
 	"errors"
 	"log"
 )
 
 func main() {
-	storage, err := mem_storage.Init()
+	storage, err := memstorage.Init()
 	if err != nil {
 		log.Fatalln(errors.New("Ошибка иницилизации mem_storage " + err.Error()))
 	}
 	//иницилизирум глобальное хранилище
-	constans.GlobalStorage = mem_storage.MemStorage{Connect: storage}
+	constans.GlobalStorage = memstorage.MemStorage{Connect: storage}
 	router := handlers.Router()
 	config := server.Config(router)
 	err = server.Server(config)

@@ -30,5 +30,4 @@ func GivHandler(c *gin.Context) {
 	c.Writer.Header().Set("Content-Type", "text/plain")
 	c.Writer.Header().Add("Location", get)
 	c.Writer.WriteHeader(http.StatusTemporaryRedirect)
-	log.Println("Данные получены по ", c.Request.URL, get)
 }

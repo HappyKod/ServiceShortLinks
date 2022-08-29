@@ -9,7 +9,7 @@ import (
 func Config(r *gin.Engine) *http.Server {
 	server := http.Server{
 		Handler: r,
-		Addr:    constans.Adres,
+		Addr:    constans.Address,
 	}
 	return &server
 }
