@@ -16,7 +16,7 @@ func main() {
 	//иницилизирум глобальное хранилище
 	constans.GlobalStorage = memstorage.MemStorage{Connect: storage}
 	router := handlers.Router()
-	config := server.Config(router)
+	config := server.NewServer(router)
 	err = server.Server(config)
 	if err != nil {
 		log.Fatalln(err)
