@@ -5,15 +5,12 @@ import (
 	"HappyKod/ServiceShortLinks/internal/storage"
 	"HappyKod/ServiceShortLinks/internal/storage/memstorage"
 	"bytes"
-	"fmt"
 	"github.com/go-playground/assert/v2"
 	"github.com/sarulabs/di"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
-
-var Key string
 
 // TestGivHandler тест метода GivHandler
 func TestGivHandler(t *testing.T) {
@@ -35,7 +32,7 @@ func TestGivHandler(t *testing.T) {
 			requestMethod: http.MethodGet,
 			keyInit:       "test1",
 			want: want{
-				responseCode:     307,
+				responseCode:     http.StatusTemporaryRedirect,
 				responseLocation: "https://github.com/HappyKod/ServiceShortLinks",
 			},
 		},
@@ -45,7 +42,7 @@ func TestGivHandler(t *testing.T) {
 			requestMethod: http.MethodGet,
 			keyInit:       "test2",
 			want: want{
-				responseCode:     307,
+				responseCode:     http.StatusTemporaryRedirect,
 				responseLocation: "https://yandex.ru/",
 			},
 		},
@@ -56,7 +53,7 @@ func TestGivHandler(t *testing.T) {
 			keyInit:       "test3",
 			key:           "test3Invalid",
 			want: want{
-				responseCode:     400,
+				responseCode:     http.StatusBadRequest,
 				responseLocation: "https://yandex.ru/",
 			},
 		},
@@ -89,7 +86,7 @@ func TestGivHandler(t *testing.T) {
 			req := httptest.NewRequest(tt.requestMethod, tt.requestPath+tt.key, nil)
 			router.ServeHTTP(w, req)
 			assert.Equal(t, tt.want.responseCode, w.Code)
-			if w.Code == 307 {
+			if w.Code == http.StatusTemporaryRedirect {
 				assert.Equal(t, tt.want.responseLocation, w.Header().Get("Location"))
 			} else {
 				assert.NotEqual(t, tt.want.responseLocation, w.Header().Get("Location"))
@@ -116,7 +113,7 @@ func TestPutHandler(t *testing.T) {
 			requestMethod: http.MethodPost,
 			requestBody:   "https://github.com/HappyKod/ServiceShortLinks",
 			want: want{
-				responseCode: 201,
+				responseCode: http.StatusCreated,
 			},
 		},
 		{
@@ -125,7 +122,7 @@ func TestPutHandler(t *testing.T) {
 			requestMethod: http.MethodPost,
 			requestBody:   "https://yandex.ru/",
 			want: want{
-				responseCode: 201,
+				responseCode: http.StatusCreated,
 			},
 		},
 		{
@@ -134,7 +131,7 @@ func TestPutHandler(t *testing.T) {
 			requestMethod: http.MethodPost,
 			requestBody:   "InvalidUrl",
 			want: want{
-				responseCode: 400,
+				responseCode: http.StatusBadRequest,
 			},
 		},
 	}
@@ -171,6 +168,7 @@ func TestGIVGET(t *testing.T) {
 	type want struct {
 		responseCode int
 	}
+	var Key string
 	tests := []struct {
 		name          string
 		requestPath   string
@@ -184,7 +182,7 @@ func TestGIVGET(t *testing.T) {
 			requestMethod: http.MethodPost,
 			requestBody:   "https://yandex.ru",
 			want: want{
-				responseCode: 201,
+				responseCode: http.StatusCreated,
 			},
 		},
 		{
@@ -192,7 +190,7 @@ func TestGIVGET(t *testing.T) {
 			requestPath:   "/",
 			requestMethod: http.MethodGet,
 			want: want{
-				responseCode: 307,
+				responseCode: http.StatusTemporaryRedirect,
 			},
 		},
 	}
@@ -216,7 +214,6 @@ func TestGIVGET(t *testing.T) {
 			w := httptest.NewRecorder()
 			var req *http.Request
 			if tt.requestMethod == http.MethodGet {
-				fmt.Println(tt.requestPath + Key)
 				req = httptest.NewRequest(http.MethodGet, Key, nil)
 			} else if tt.requestMethod == http.MethodPost {
 				req = httptest.NewRequest(http.MethodPost, tt.requestPath, bytes.NewBuffer([]byte(tt.requestBody)))
