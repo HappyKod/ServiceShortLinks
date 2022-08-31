@@ -11,8 +11,8 @@ type MemStorage struct {
 	Connect *connect
 }
 
-// Init иницилизация хранилища
-func Init() (*connect, error) {
+// New иницилизация хранилища
+func New() (*connect, error) {
 	return &connect{
 		cache: make(map[string]string)}, nil
 }

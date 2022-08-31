@@ -63,7 +63,7 @@ func TestGivHandler(t *testing.T) {
 	err := builder.Add(di.Def{
 		Name: "links-storage",
 		Build: func(ctn di.Container) (interface{}, error) {
-			TestStorage, err := memstorage.Init()
+			TestStorage, err := memstorage.New()
 			if err != nil {
 				t.Fatal("Ошибка иницилизации mem_storage ", err)
 			}
@@ -140,7 +140,7 @@ func TestPutHandler(t *testing.T) {
 	err := builder.Add(di.Def{
 		Name: "links-storage",
 		Build: func(ctn di.Container) (interface{}, error) {
-			TestStorage, err := memstorage.Init()
+			TestStorage, err := memstorage.New()
 			if err != nil {
 				t.Fatal("Ошибка иницилизации mem_storage ", err)
 			}
@@ -198,7 +198,7 @@ func TestGIVGET(t *testing.T) {
 	err := builder.Add(di.Def{
 		Name: "links-storage",
 		Build: func(ctn di.Container) (interface{}, error) {
-			TestStorage, err := memstorage.Init()
+			TestStorage, err := memstorage.New()
 			if err != nil {
 				t.Fatal("Ошибка иницилизации mem_storage ", err)
 			}

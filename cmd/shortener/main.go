@@ -14,7 +14,7 @@ func main() {
 	err := builder.Add(di.Def{
 		Name: "links-storage",
 		Build: func(ctn di.Container) (interface{}, error) {
-			storage, err := memstorage.Init()
+			storage, err := memstorage.New()
 			if err != nil {
 				log.Fatalln("Ошибка иницилизации mem_storage ", err)
 			}
