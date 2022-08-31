@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/constans"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"

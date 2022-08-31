@@ -1,10 +1,10 @@
 package main
 
 import (
-	"ServiceShortLinks/internal/app/handlers"
-	"ServiceShortLinks/internal/app/server"
-	"ServiceShortLinks/internal/constans"
-	"ServiceShortLinks/internal/storage/memstorage"
+	"HappyKod/ServiceShortLinks/internal/app/handlers"
+	"HappyKod/ServiceShortLinks/internal/app/server"
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/storage/memstorage"
 	"errors"
 	"log"
 )

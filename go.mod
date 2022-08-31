@@ -1,4 +1,4 @@
-module ServiceShortLinks
+module HappyKod/ServiceShortLinks
 
 go 1.18
 
