@@ -19,7 +19,14 @@ func PutHandler(c *gin.Context) {
 		http.Error(c.Writer, "Ошибка обработки тела запроса", http.StatusInternalServerError)
 		return
 	}
-	defer c.Request.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err = Body.Close()
+		if err != nil {
+			log.Println("Ошибка закрытия тела запроса ", err)
+			http.Error(c.Writer, "Ошибка обработки тела запроса", http.StatusInternalServerError)
+			return
+		}
+	}(c.Request.Body)
 	if !utils.ValidatorURL(string(bytesURL)) {
 		http.Error(c.Writer, "Ошибка ссылка не валидна", http.StatusBadRequest)
 		return
@@ -32,6 +39,7 @@ func PutHandler(c *gin.Context) {
 		if err != nil {
 			log.Println("Ошибка получение данных из хранилища ", c.Request.URL, err.Error())
 			http.Error(c.Writer, "Ошибка получение данных из хранилища ", http.StatusInternalServerError)
+			return
 		}
 		if get == "" {
 			break
