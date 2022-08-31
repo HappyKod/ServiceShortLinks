@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"ServiceShortLinks/internal/constans"
-	mem_storage "ServiceShortLinks/internal/storage/memstorage"
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/storage"
+	"HappyKod/ServiceShortLinks/internal/storage/memstorage"
 	"bytes"
-	"errors"
 	"fmt"
 	"github.com/go-playground/assert/v2"
-	"log"
+	"github.com/sarulabs/di"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -61,14 +61,21 @@ func TestGivHandler(t *testing.T) {
 			},
 		},
 	}
-	storage, err := mem_storage.Init()
-	if err != nil {
-		log.Fatalln(errors.New("Ошибка иницилизации mem_storage " + err.Error()))
-	}
 	//иницилизирум глобальное хранилище
-	constans.GlobalStorage = mem_storage.MemStorage{Connect: storage}
-
-	//Наполяем тестовыми данными
+	builder, _ := di.NewBuilder()
+	err := builder.Add(di.Def{
+		Name: "links-storage",
+		Build: func(ctn di.Container) (interface{}, error) {
+			TestStorage, err := memstorage.Init()
+			if err != nil {
+				t.Fatal("Ошибка иницилизации mem_storage ", err)
+			}
+			return memstorage.MemStorage{Connect: TestStorage}, nil
+		}})
+	if err != nil {
+		t.Fatal("Ошибка иницилизации контейнера", err)
+	}
+	constans.GlobalContainer = builder.Build()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -76,7 +83,7 @@ func TestGivHandler(t *testing.T) {
 				tt.key = tt.keyInit
 			}
 			//Наполняем тестовыми данными
-			assert.Equal(t, constans.GlobalStorage.Put(tt.keyInit, tt.want.responseLocation), nil)
+			assert.Equal(t, constans.GlobalContainer.Get("links-storage").(storage.Storages).Put(tt.keyInit, tt.want.responseLocation), nil)
 			router := Router()
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest(tt.requestMethod, tt.requestPath+tt.key, nil)
@@ -131,12 +138,22 @@ func TestPutHandler(t *testing.T) {
 			},
 		},
 	}
-	storage, err := mem_storage.Init()
-	if err != nil {
-		log.Fatalln(errors.New("Ошибка иницилизации mem_storage " + err.Error()))
-	}
 	//иницилизирум глобальное хранилище
-	constans.GlobalStorage = mem_storage.MemStorage{Connect: storage}
+	builder, _ := di.NewBuilder()
+	err := builder.Add(di.Def{
+		Name: "links-storage",
+		Build: func(ctn di.Container) (interface{}, error) {
+			TestStorage, err := memstorage.Init()
+			if err != nil {
+				t.Fatal("Ошибка иницилизации mem_storage ", err)
+			}
+			return memstorage.MemStorage{Connect: TestStorage}, nil
+		}})
+	if err != nil {
+		t.Fatal("Ошибка иницилизации контейнера", err)
+	}
+	constans.GlobalContainer = builder.Build()
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
@@ -179,12 +196,20 @@ func TestGIVGET(t *testing.T) {
 			},
 		},
 	}
-	storage, err := mem_storage.Init()
+	builder, _ := di.NewBuilder()
+	err := builder.Add(di.Def{
+		Name: "links-storage",
+		Build: func(ctn di.Container) (interface{}, error) {
+			TestStorage, err := memstorage.Init()
+			if err != nil {
+				t.Fatal("Ошибка иницилизации mem_storage ", err)
+			}
+			return memstorage.MemStorage{Connect: TestStorage}, nil
+		}})
 	if err != nil {
-		log.Fatalln(errors.New("Ошибка иницилизации mem_storage " + err.Error()))
+		t.Fatal("Ошибка иницилизации контейнера", err)
 	}
-	//иницилизирум глобальное хранилище
-	constans.GlobalStorage = mem_storage.MemStorage{Connect: storage}
+	constans.GlobalContainer = builder.Build()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			router := Router()
@@ -201,5 +226,4 @@ func TestGIVGET(t *testing.T) {
 			Key = w.Body.String()
 		})
 	}
-	fmt.Println(Key)
 }
