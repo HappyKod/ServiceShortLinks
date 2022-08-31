@@ -27,9 +27,5 @@ func main() {
 
 	//иницилизирум глобальное хранилище
 	router := handlers.Router()
-	newServer := server.NewServer(router)
-	err = server.Server(newServer)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	server.NewServer(router)
 }
