@@ -14,7 +14,7 @@ import (
 // PutHandler принимает в теле запроса строку URL для сокращения и
 // возвращает ответ с кодом 201 и сокращённым URL в виде текстовой строки в теле.
 func PutHandler(c *gin.Context) {
-	storage := constans.GlobalContainer.Get("links-storage").(storage.Storages)
+	connect := constans.GlobalContainer.Get("links-storage").(storage.Storages)
 	bytesURL, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Println("Ошибка обработки тела запроса ", c.Request.URL, err.Error())
@@ -37,7 +37,7 @@ func PutHandler(c *gin.Context) {
 	//Подбираем уникальный ключ
 	for {
 		key = utils.GeneratorStringUUID()
-		get, err := storage.Get(key)
+		get, err := connect.Get(key)
 		if err != nil {
 			log.Println("Ошибка получение данных из хранилища ", c.Request.URL, err.Error())
 			http.Error(c.Writer, "Ошибка получение данных из хранилища ", http.StatusInternalServerError)
@@ -47,7 +47,7 @@ func PutHandler(c *gin.Context) {
 			break
 		}
 	}
-	if err = storage.Put(key, string(bytesURL)); err != nil {
+	if err = connect.Put(key, string(bytesURL)); err != nil {
 		log.Println("Ошибка записи данных в хранилище ", c.Request.URL, err.Error())
 		http.Error(c.Writer, "Ошибка записи данных в хранилище", http.StatusInternalServerError)
 		return
@@ -56,6 +56,5 @@ func PutHandler(c *gin.Context) {
 	_, err = c.Writer.WriteString("http://" + path.Join(constans.Address, key))
 	if err != nil {
 		log.Println("Ошибка генерации Body ", c.Request.URL, string(bytesURL), key, err.Error())
-		http.Error(c.Writer, "Ошибка генерации Body", http.StatusInternalServerError)
 	}
 }
