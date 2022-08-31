@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/storage"
 	"HappyKod/ServiceShortLinks/utils"
 	"github.com/gin-gonic/gin"
 	"io"
@@ -13,6 +14,7 @@ import (
 // PutHandler принимает в теле запроса строку URL для сокращения и
 // возвращает ответ с кодом 201 и сокращённым URL в виде текстовой строки в теле.
 func PutHandler(c *gin.Context) {
+	storage := constans.GlobalContainer.Get("links-storage").(storage.Storages)
 	bytesURL, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Println("Ошибка обработки тела запроса ", c.Request.URL, err.Error())
@@ -35,7 +37,7 @@ func PutHandler(c *gin.Context) {
 	//Подбираем уникальный ключ
 	for {
 		key = utils.GeneratorStringUUID()
-		get, err := constans.GlobalStorage.Get(key)
+		get, err := storage.Get(key)
 		if err != nil {
 			log.Println("Ошибка получение данных из хранилища ", c.Request.URL, err.Error())
 			http.Error(c.Writer, "Ошибка получение данных из хранилища ", http.StatusInternalServerError)
@@ -45,7 +47,7 @@ func PutHandler(c *gin.Context) {
 			break
 		}
 	}
-	if err = constans.GlobalStorage.Put(key, string(bytesURL)); err != nil {
+	if err = storage.Put(key, string(bytesURL)); err != nil {
 		log.Println("Ошибка записи данных в хранилище ", c.Request.URL, err.Error())
 		http.Error(c.Writer, "Ошибка записи данных в хранилище", http.StatusInternalServerError)
 		return

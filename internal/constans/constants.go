@@ -1,6 +1,9 @@
 package constans
 
-import "HappyKod/ServiceShortLinks/internal/storage"
+import (
+	"github.com/sarulabs/di"
+)
 
-var GlobalStorage storage.Storages
-var Address = "localhost:8080"
+var GlobalContainer di.Container
+
+const Address = "localhost:8080"

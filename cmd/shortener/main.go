@@ -5,19 +5,30 @@ import (
 	"HappyKod/ServiceShortLinks/internal/app/server"
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"HappyKod/ServiceShortLinks/internal/storage/memstorage"
+	"github.com/sarulabs/di"
 	"log"
 )
 
 func main() {
-	storage, err := memstorage.Init()
+	builder, _ := di.NewBuilder()
+	err := builder.Add(di.Def{
+		Name: "links-storage",
+		Build: func(ctn di.Container) (interface{}, error) {
+			storage, err := memstorage.Init()
+			if err != nil {
+				log.Fatalln("Ошибка иницилизации mem_storage ", err)
+			}
+			return memstorage.MemStorage{Connect: storage}, nil
+		}})
 	if err != nil {
-		log.Fatalln("Ошибка иницилизации mem_storage ", err)
+		log.Fatalln("Ошибка иницилизации контейнера", err)
 	}
+	constans.GlobalContainer = builder.Build()
+
 	//иницилизирум глобальное хранилище
-	constans.GlobalStorage = memstorage.MemStorage{Connect: storage}
 	router := handlers.Router()
-	config := server.NewServer(router)
-	err = server.Server(config)
+	newServer := server.NewServer(router)
+	err = server.Server(newServer)
 	if err != nil {
 		log.Fatalln(err)
 	}

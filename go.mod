@@ -6,6 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-playground/assert/v2 v2.0.1
 	github.com/google/uuid v1.3.0
+	github.com/sarulabs/di v2.0.0+incompatible
 )
 
 require (
