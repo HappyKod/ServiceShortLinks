@@ -33,19 +33,11 @@ func PutHandler(c *gin.Context) {
 		http.Error(c.Writer, "Ошибка ссылка не валидна", http.StatusBadRequest)
 		return
 	}
-	var key string
-	//Подбираем уникальный ключ
-	for {
-		key = utils.GeneratorStringUUID()
-		get, err := connect.Get(key)
-		if err != nil {
-			log.Println("Ошибка получение данных из хранилища ", c.Request.URL, err.Error())
-			http.Error(c.Writer, "Ошибка получение данных из хранилища ", http.StatusInternalServerError)
-			return
-		}
-		if get == "" {
-			break
-		}
+	key, err := connect.CreateUniqKey()
+	if err != nil {
+		log.Println("Ошибка получение данных из хранилища ", c.Request.URL, err.Error())
+		http.Error(c.Writer, "Ошибка получение данных из хранилища ", http.StatusInternalServerError)
+		return
 	}
 	if err = connect.Put(key, string(bytesURL)); err != nil {
 		log.Println("Ошибка записи данных в хранилище ", c.Request.URL, err.Error())

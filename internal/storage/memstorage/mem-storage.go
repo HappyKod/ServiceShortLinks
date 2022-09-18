@@ -1,6 +1,9 @@
 package memstorage
 
-import "sync"
+import (
+	"HappyKod/ServiceShortLinks/utils"
+	"sync"
+)
 
 type connect struct {
 	mu    sync.Mutex
@@ -35,4 +38,20 @@ func (MS MemStorage) Put(key string, url string) error {
 	MS.Connect.cache[key] = url
 	MS.Connect.mu.Unlock()
 	return nil
+}
+
+// CreateUniqKey Создаем уникальный ключ для записи
+func (MS MemStorage) CreateUniqKey() (string, error) {
+	var key string
+	var url string
+	for {
+		key = utils.GeneratorStringUUID()
+		MS.Connect.mu.Lock()
+		MS.Connect.cache[key] = url
+		MS.Connect.mu.Unlock()
+		if url == "" {
+			break
+		}
+	}
+	return key, nil
 }
