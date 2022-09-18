@@ -9,6 +9,6 @@ func Router() *gin.Engine {
 	r := gin.New()
 	r.GET("/:id", GivHandler)
 	r.POST("/", PutHandler)
-	r.POST("/api/shorten", PutApiHandler)
+	r.POST("/api/shorten", PutAPIHandler)
 	return r
 }

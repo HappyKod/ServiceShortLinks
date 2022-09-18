@@ -5,7 +5,6 @@ import (
 	"HappyKod/ServiceShortLinks/internal/storage"
 	"HappyKod/ServiceShortLinks/utils"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
 	"log"
@@ -13,9 +12,9 @@ import (
 	"path"
 )
 
-// PutApiHandler принимает в теле запроса JSON-объект {"url":"<some_url>"}
+// PutAPIHandler принимает в теле запроса JSON-объект {"url":"<some_url>"}
 // и возвращает в ответ объект {"result":"<shorten_url>"}.
-func PutApiHandler(c *gin.Context) {
+func PutAPIHandler(c *gin.Context) {
 	connect := constans.GlobalContainer.Get("links-storage").(storage.Storages)
 	bytesStructURL, err := io.ReadAll(c.Request.Body)
 	if err != nil {
@@ -32,7 +31,7 @@ func PutApiHandler(c *gin.Context) {
 		}
 	}(c.Request.Body)
 	var bodyRequest struct {
-		Url string `xml:"url"`
+		URL string `xml:"url"`
 	}
 	err = json.Unmarshal(bytesStructURL, &bodyRequest)
 	if err != nil {
@@ -42,7 +41,7 @@ func PutApiHandler(c *gin.Context) {
 			return
 		}
 	}
-	if !utils.ValidatorURL(bodyRequest.Url) {
+	if !utils.ValidatorURL(bodyRequest.URL) {
 		http.Error(c.Writer, "Ошибка ссылка не валидна", http.StatusBadRequest)
 		return
 	}
@@ -53,13 +52,11 @@ func PutApiHandler(c *gin.Context) {
 		http.Error(c.Writer, "Ошибка получение данных из хранилища ", http.StatusInternalServerError)
 		return
 	}
-	if err = connect.Put(key, bodyRequest.Url); err != nil {
+	if err = connect.Put(key, bodyRequest.URL); err != nil {
 		log.Println("Ошибка записи данных в хранилище ", c.Request.URL, err.Error())
 		http.Error(c.Writer, "Ошибка записи данных в хранилище", http.StatusInternalServerError)
 		return
 	}
-	get, _ := connect.Get(key)
-	fmt.Println(get)
 
 	bodyResponse := struct {
 		Result string `xml:"result"`

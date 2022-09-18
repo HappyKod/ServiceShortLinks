@@ -226,7 +226,7 @@ func TestGIVGET(t *testing.T) {
 	}
 }
 
-// TestPutHandler тест метода PutApiHandler
+// TestPutHandler тест метода PutAPIHandler
 func TestPutApiHandler(t *testing.T) {
 	type want struct {
 		responseCode int
@@ -294,7 +294,7 @@ func TestPutApiHandler(t *testing.T) {
 	}
 }
 
-// TestPutApiGET Тестируем связку GivHandler PutApiHandler
+// TestPutApiGET Тестируем связку GivHandler PutAPIHandler
 func TestPutApiGET(t *testing.T) {
 	type want struct {
 		responseCode int
