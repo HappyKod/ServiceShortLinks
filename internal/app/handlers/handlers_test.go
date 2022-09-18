@@ -5,6 +5,7 @@ import (
 	"HappyKod/ServiceShortLinks/internal/storage"
 	"HappyKod/ServiceShortLinks/internal/storage/memstorage"
 	"bytes"
+	"encoding/json"
 	"github.com/go-playground/assert/v2"
 	"github.com/sarulabs/di"
 	"net/http"
@@ -221,6 +222,143 @@ func TestGIVGET(t *testing.T) {
 			router.ServeHTTP(w, req)
 			assert.Equal(t, tt.want.responseCode, w.Code)
 			Key = w.Body.String()
+		})
+	}
+}
+
+// TestPutHandler тест метода PutApiHandler
+func TestPutApiHandler(t *testing.T) {
+	type want struct {
+		responseCode int
+	}
+	tests := []struct {
+		name          string
+		requestPath   string
+		requestMethod string
+		requestBody   string
+		want          want
+	}{
+		{
+			name:          "Генерируем сокращенную ссылку test1",
+			requestPath:   "/api/shorten",
+			requestMethod: http.MethodPost,
+			requestBody:   `{"url": "https://github.com/HappyKod/ServiceShortLinks"}`,
+			want: want{
+				responseCode: http.StatusCreated,
+			},
+		},
+		{
+			name:          "Генерируем сокращенную ссылку test2",
+			requestPath:   "/api/shorten",
+			requestMethod: http.MethodPost,
+			requestBody:   `{"url": "https://yandex.ru"}`,
+			want: want{
+				responseCode: http.StatusCreated,
+			},
+		},
+		{
+			name:          "Получаем ошибку при генерации ссылки test3",
+			requestPath:   "/api/shorten",
+			requestMethod: http.MethodPost,
+			requestBody:   `{"url": "InvalidUrl"}`,
+			want: want{
+				responseCode: http.StatusBadRequest,
+			},
+		},
+	}
+	//иницилизирум глобальное хранилище
+	builder, _ := di.NewBuilder()
+	err := builder.Add(di.Def{
+		Name: "links-storage",
+		Build: func(ctn di.Container) (interface{}, error) {
+			TestStorage, err := memstorage.New()
+			if err != nil {
+				t.Fatal("Ошибка иницилизации mem_storage ", err)
+			}
+			return memstorage.MemStorage{Connect: TestStorage}, nil
+		}})
+	if err != nil {
+		t.Fatal("Ошибка иницилизации контейнера", err)
+	}
+	constans.GlobalContainer = builder.Build()
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			router := Router()
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest(tt.requestMethod, tt.requestPath, bytes.NewBuffer([]byte(tt.requestBody)))
+			router.ServeHTTP(w, req)
+			assert.Equal(t, tt.want.responseCode, w.Code)
+		})
+	}
+}
+
+// TestPutApiGET Тестируем связку GivHandler PutApiHandler
+func TestPutApiGET(t *testing.T) {
+	type want struct {
+		responseCode int
+	}
+	var Key string
+	tests := []struct {
+		name          string
+		requestPath   string
+		requestMethod string
+		requestBody   string
+		want          want
+	}{
+		{
+			name:          "Кодируем ссылку",
+			requestPath:   "/api/shorten",
+			requestMethod: http.MethodPost,
+			requestBody:   `{"url": "https://github.com/HappyKod/ServiceShortLinks"}`,
+			want: want{
+				responseCode: http.StatusCreated,
+			},
+		},
+		{
+			name:          "Получаем ссылку по ключу",
+			requestPath:   "/",
+			requestMethod: http.MethodGet,
+			want: want{
+				responseCode: http.StatusTemporaryRedirect,
+			},
+		},
+	}
+	builder, _ := di.NewBuilder()
+	err := builder.Add(di.Def{
+		Name: "links-storage",
+		Build: func(ctn di.Container) (interface{}, error) {
+			TestStorage, err := memstorage.New()
+			if err != nil {
+				t.Fatal("Ошибка иницилизации mem_storage ", err)
+			}
+			return memstorage.MemStorage{Connect: TestStorage}, nil
+		}})
+	if err != nil {
+		t.Fatal("Ошибка иницилизации контейнера", err)
+	}
+	constans.GlobalContainer = builder.Build()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			router := Router()
+			w := httptest.NewRecorder()
+			var req *http.Request
+			if tt.requestMethod == http.MethodGet {
+				req = httptest.NewRequest(http.MethodGet, Key, nil)
+				router.ServeHTTP(w, req)
+				assert.Equal(t, tt.want.responseCode, w.Code)
+			} else if tt.requestMethod == http.MethodPost {
+				req = httptest.NewRequest(http.MethodPost, tt.requestPath, bytes.NewBuffer([]byte(tt.requestBody)))
+				router.ServeHTTP(w, req)
+				assert.Equal(t, tt.want.responseCode, w.Code)
+				keyMAP := make(map[string]string)
+				err = json.Unmarshal(w.Body.Bytes(), &keyMAP)
+				if err != nil {
+					t.Fatal(err)
+				}
+				Key = keyMAP["Result"]
+			}
 		})
 	}
 }
