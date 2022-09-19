@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/models"
 	"HappyKod/ServiceShortLinks/internal/storage"
 	"HappyKod/ServiceShortLinks/utils"
 	"github.com/gin-gonic/gin"
@@ -45,7 +46,7 @@ func PutHandler(c *gin.Context) {
 		return
 	}
 	c.Writer.WriteHeader(http.StatusCreated)
-	_, err = c.Writer.WriteString("http://" + path.Join(constans.Address, key))
+	_, err = c.Writer.WriteString("http://" + path.Join(constans.GlobalContainer.Get("server-config").(models.Config).BaseURL, key))
 	if err != nil {
 		log.Println("Ошибка генерации Body ", c.Request.URL, string(bytesURL), key, err.Error())
 	}

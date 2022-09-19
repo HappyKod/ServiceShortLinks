@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/models"
 	"HappyKod/ServiceShortLinks/internal/storage"
 	"HappyKod/ServiceShortLinks/utils"
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
 	"log"
@@ -57,11 +59,12 @@ func PutAPIHandler(c *gin.Context) {
 		http.Error(c.Writer, "Ошибка записи данных в хранилище", http.StatusInternalServerError)
 		return
 	}
-
+	url := constans.GlobalContainer.Get("server-config").(models.Config).BaseURL
+	fmt.Println(url, "-----")
 	bodyResponse := struct {
 		Result string `xml:"result"`
 	}{
-		"http://" + path.Join(constans.Address, key),
+		"http://" + path.Join(url, key),
 	}
 
 	bytes, err := json.Marshal(bodyResponse)

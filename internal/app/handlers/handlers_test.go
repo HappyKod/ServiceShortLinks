@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/models"
 	"HappyKod/ServiceShortLinks/internal/storage"
 	"HappyKod/ServiceShortLinks/internal/storage/memstorage"
 	"bytes"
 	"encoding/json"
+	"github.com/caarlos0/env/v6"
 	"github.com/go-playground/assert/v2"
 	"github.com/sarulabs/di"
 	"net/http"
@@ -59,16 +61,28 @@ func TestGivHandler(t *testing.T) {
 			},
 		},
 	}
-	//иницилизирум глобальное хранилище
+	var cfg models.Config
+	err := env.Parse(&cfg)
+	if err != nil {
+		t.Fatal(err, "Ошибка считывания конфига")
+	}
 	builder, _ := di.NewBuilder()
-	err := builder.Add(di.Def{
+	err = builder.Add(di.Def{
 		Name: "links-storage",
 		Build: func(ctn di.Container) (interface{}, error) {
-			TestStorage, err := memstorage.New()
+			linksStorage, err := memstorage.New()
 			if err != nil {
 				t.Fatal("Ошибка иницилизации mem_storage ", err)
 			}
-			return memstorage.MemStorage{Connect: TestStorage}, nil
+			return memstorage.MemStorage{Connect: linksStorage}, nil
+		}})
+	if err != nil {
+		t.Fatal("Ошибка иницилизации контейнера", err)
+	}
+	err = builder.Add(di.Def{
+		Name: "server-config",
+		Build: func(ctn di.Container) (interface{}, error) {
+			return cfg, nil
 		}})
 	if err != nil {
 		t.Fatal("Ошибка иницилизации контейнера", err)
@@ -136,16 +150,28 @@ func TestPutHandler(t *testing.T) {
 			},
 		},
 	}
-	//иницилизирум глобальное хранилище
+	var cfg models.Config
+	err := env.Parse(&cfg)
+	if err != nil {
+		t.Fatal(err, "Ошибка считывания конфига")
+	}
 	builder, _ := di.NewBuilder()
-	err := builder.Add(di.Def{
+	err = builder.Add(di.Def{
 		Name: "links-storage",
 		Build: func(ctn di.Container) (interface{}, error) {
-			TestStorage, err := memstorage.New()
+			linksStorage, err := memstorage.New()
 			if err != nil {
 				t.Fatal("Ошибка иницилизации mem_storage ", err)
 			}
-			return memstorage.MemStorage{Connect: TestStorage}, nil
+			return memstorage.MemStorage{Connect: linksStorage}, nil
+		}})
+	if err != nil {
+		t.Fatal("Ошибка иницилизации контейнера", err)
+	}
+	err = builder.Add(di.Def{
+		Name: "server-config",
+		Build: func(ctn di.Container) (interface{}, error) {
+			return cfg, nil
 		}})
 	if err != nil {
 		t.Fatal("Ошибка иницилизации контейнера", err)
@@ -195,15 +221,28 @@ func TestGIVGET(t *testing.T) {
 			},
 		},
 	}
+	var cfg models.Config
+	err := env.Parse(&cfg)
+	if err != nil {
+		t.Fatal(err, "Ошибка считывания конфига")
+	}
 	builder, _ := di.NewBuilder()
-	err := builder.Add(di.Def{
+	err = builder.Add(di.Def{
 		Name: "links-storage",
 		Build: func(ctn di.Container) (interface{}, error) {
-			TestStorage, err := memstorage.New()
+			linksStorage, err := memstorage.New()
 			if err != nil {
 				t.Fatal("Ошибка иницилизации mem_storage ", err)
 			}
-			return memstorage.MemStorage{Connect: TestStorage}, nil
+			return memstorage.MemStorage{Connect: linksStorage}, nil
+		}})
+	if err != nil {
+		t.Fatal("Ошибка иницилизации контейнера", err)
+	}
+	err = builder.Add(di.Def{
+		Name: "server-config",
+		Build: func(ctn di.Container) (interface{}, error) {
+			return cfg, nil
 		}})
 	if err != nil {
 		t.Fatal("Ошибка иницилизации контейнера", err)
@@ -266,16 +305,28 @@ func TestPutApiHandler(t *testing.T) {
 			},
 		},
 	}
-	//иницилизирум глобальное хранилище
+	var cfg models.Config
+	err := env.Parse(&cfg)
+	if err != nil {
+		t.Fatal(err, "Ошибка считывания конфига")
+	}
 	builder, _ := di.NewBuilder()
-	err := builder.Add(di.Def{
+	err = builder.Add(di.Def{
 		Name: "links-storage",
 		Build: func(ctn di.Container) (interface{}, error) {
-			TestStorage, err := memstorage.New()
+			linksStorage, err := memstorage.New()
 			if err != nil {
 				t.Fatal("Ошибка иницилизации mem_storage ", err)
 			}
-			return memstorage.MemStorage{Connect: TestStorage}, nil
+			return memstorage.MemStorage{Connect: linksStorage}, nil
+		}})
+	if err != nil {
+		t.Fatal("Ошибка иницилизации контейнера", err)
+	}
+	err = builder.Add(di.Def{
+		Name: "server-config",
+		Build: func(ctn di.Container) (interface{}, error) {
+			return cfg, nil
 		}})
 	if err != nil {
 		t.Fatal("Ошибка иницилизации контейнера", err)
@@ -325,15 +376,28 @@ func TestPutApiGET(t *testing.T) {
 			},
 		},
 	}
+	var cfg models.Config
+	err := env.Parse(&cfg)
+	if err != nil {
+		t.Fatal(err, "Ошибка считывания конфига")
+	}
 	builder, _ := di.NewBuilder()
-	err := builder.Add(di.Def{
+	err = builder.Add(di.Def{
 		Name: "links-storage",
 		Build: func(ctn di.Container) (interface{}, error) {
-			TestStorage, err := memstorage.New()
+			linksStorage, err := memstorage.New()
 			if err != nil {
 				t.Fatal("Ошибка иницилизации mem_storage ", err)
 			}
-			return memstorage.MemStorage{Connect: TestStorage}, nil
+			return memstorage.MemStorage{Connect: linksStorage}, nil
+		}})
+	if err != nil {
+		t.Fatal("Ошибка иницилизации контейнера", err)
+	}
+	err = builder.Add(di.Def{
+		Name: "server-config",
+		Build: func(ctn di.Container) (interface{}, error) {
+			return cfg, nil
 		}})
 	if err != nil {
 		t.Fatal("Ошибка иницилизации контейнера", err)

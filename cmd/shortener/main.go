@@ -4,14 +4,21 @@ import (
 	"HappyKod/ServiceShortLinks/internal/app/handlers"
 	"HappyKod/ServiceShortLinks/internal/app/server"
 	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/models"
 	"HappyKod/ServiceShortLinks/internal/storage/memstorage"
+	"github.com/caarlos0/env/v6"
 	"github.com/sarulabs/di"
 	"log"
 )
 
-func main() {
+func init() {
+	var cfg models.Config
+	err := env.Parse(&cfg)
+	if err != nil {
+		log.Fatal(err, "Ошибка считывания конфига")
+	}
 	builder, _ := di.NewBuilder()
-	err := builder.Add(di.Def{
+	err = builder.Add(di.Def{
 		Name: "links-storage",
 		Build: func(ctn di.Container) (interface{}, error) {
 			storage, err := memstorage.New()
@@ -23,9 +30,18 @@ func main() {
 	if err != nil {
 		log.Fatalln("Ошибка иницилизации контейнера", err)
 	}
+	err = builder.Add(di.Def{
+		Name: "server-config",
+		Build: func(ctn di.Container) (interface{}, error) {
+			return cfg, nil
+		}})
+	if err != nil {
+		log.Fatalln("Ошибка иницилизации контейнера", err)
+	}
 	constans.GlobalContainer = builder.Build()
+}
 
-	//иницилизирум глобальное хранилище
+func main() {
 	router := handlers.Router()
 	server.NewServer(router)
 }
