@@ -421,7 +421,7 @@ func TestPutApiGET(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				Key = keyMAP["Result"]
+				Key = keyMAP["result"]
 			}
 		})
 	}

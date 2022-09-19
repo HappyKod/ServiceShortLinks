@@ -5,5 +5,3 @@ import (
 )
 
 var GlobalContainer di.Container
-
-const Address = "localhost:8080"

@@ -10,7 +10,7 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"path"
+	"net/url"
 )
 
 // PutAPIHandler принимает в теле запроса JSON-объект {"url":"<some_url>"}
@@ -58,12 +58,15 @@ func PutAPIHandler(c *gin.Context) {
 		http.Error(c.Writer, "Ошибка записи данных в хранилище", http.StatusInternalServerError)
 		return
 	}
+	body, err := url.JoinPath(constans.GlobalContainer.Get("server-config").(models.Config).BaseURL, key)
+	if err != nil {
+		log.Println("Ошибка генерации ссылки", c.Request.URL, key, err.Error())
+	}
 	bodyResponse := struct {
 		Result string `json:"result"`
 	}{
-		path.Join(constans.GlobalContainer.Get("server-config").(models.Config).BaseURL, key),
+		body,
 	}
-
 	bytes, err := json.Marshal(bodyResponse)
 	if err != nil {
 		log.Println("Ошибка генерации Body ", c.Request.URL, string(bytes), key, err.Error())

@@ -9,7 +9,7 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"path"
+	"net/url"
 )
 
 // PutHandler принимает в теле запроса строку URL для сокращения и
@@ -46,7 +46,11 @@ func PutHandler(c *gin.Context) {
 		return
 	}
 	c.Writer.WriteHeader(http.StatusCreated)
-	_, err = c.Writer.WriteString(path.Join(constans.GlobalContainer.Get("server-config").(models.Config).BaseURL, key))
+	body, err := url.JoinPath(constans.GlobalContainer.Get("server-config").(models.Config).BaseURL, key)
+	if err != nil {
+		log.Println("Ошибка генерации ссылки", c.Request.URL, string(bytesURL), key, err.Error())
+	}
+	_, err = c.Writer.WriteString(body)
 	if err != nil {
 		log.Println("Ошибка генерации Body ", c.Request.URL, string(bytesURL), key, err.Error())
 	}
