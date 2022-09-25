@@ -15,9 +15,10 @@ type MemStorage struct {
 }
 
 // New иницилизация хранилища
-func New() (*connect, error) {
-	return &connect{
-		cache: make(map[string]string)}, nil
+func New() (*MemStorage, error) {
+	return &MemStorage{
+		Connect: &connect{cache: make(map[string]string)},
+	}, nil
 }
 
 // Ping проверка харнилища

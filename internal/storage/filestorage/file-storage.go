@@ -1,0 +1,109 @@
+package filestorage
+
+import (
+	"HappyKod/ServiceShortLinks/utils"
+	"bufio"
+	"encoding/json"
+	"log"
+	"os"
+	"sync"
+)
+
+type connect struct {
+	file    *os.File
+	encoder *json.Encoder
+	decoder *json.Decoder
+	mu      *sync.Mutex
+}
+
+type FileStorage struct {
+	Connect  *connect
+	FileNAME string
+}
+
+// New инициализации хранилища
+func New(FileNAME string) (*FileStorage, error) {
+	file, err := os.OpenFile(FileNAME, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0777)
+	if err != nil {
+		return nil, err
+	}
+	return &FileStorage{
+		Connect: &connect{
+			file:    file,
+			encoder: json.NewEncoder(file),
+			decoder: json.NewDecoder(file),
+			mu:      new(sync.Mutex),
+		},
+		FileNAME: FileNAME,
+	}, nil
+}
+
+// Ping проверка харнилища
+func (FS FileStorage) Ping() (bool, error) {
+	return true, nil
+}
+
+// Get получаем значение по ключу
+func (FS FileStorage) Get(key string) (string, error) {
+	FS.Connect.mu.Lock()
+	defer FS.Connect.mu.Unlock()
+	file, err := os.Open(FS.FileNAME)
+	if err != nil {
+		return "", err
+	}
+	defer func(file *os.File) {
+		err = file.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(file)
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		event := make(map[string]string)
+		if err = json.Unmarshal(scanner.Bytes(), &event); err != nil {
+			return "", err
+		}
+		if event[key] != "" {
+			return event[key], nil
+		}
+	}
+	return "", nil
+}
+
+// Put добавляем занчение по ключу
+func (FS FileStorage) Put(key string, url string) error {
+	FS.Connect.mu.Lock()
+	defer FS.Connect.mu.Unlock()
+	structMAP := make(map[string]string)
+	structMAP[key] = url
+	err := FS.Connect.encoder.Encode(&structMAP)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// CreateUniqKey Создаем уникальный ключ для записи
+func (FS FileStorage) CreateUniqKey() (string, error) {
+	var key string
+	for {
+		key = utils.GeneratorStringUUID()
+		url, err := FS.Get(key)
+		if err != nil {
+			return "", err
+		}
+		if url == "" {
+			break
+		}
+	}
+	return key, nil
+}
+
+// Close закрываем соединение (файл)
+func (FS FileStorage) Close() error {
+	err := FS.Connect.file.Close()
+	if err != nil {
+		return err
+	}
+	return nil
+}
