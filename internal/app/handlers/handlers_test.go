@@ -1,17 +1,18 @@
 package handlers
 
 import (
+	"HappyKod/ServiceShortLinks/internal/app/container"
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"HappyKod/ServiceShortLinks/internal/models"
 	"HappyKod/ServiceShortLinks/internal/storage"
-	"HappyKod/ServiceShortLinks/internal/storage/memstorage"
 	"bytes"
 	"encoding/json"
-	"github.com/caarlos0/env/v6"
+	"fmt"
 	"github.com/go-playground/assert/v2"
-	"github.com/sarulabs/di"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
@@ -28,9 +29,10 @@ func TestGivHandler(t *testing.T) {
 		keyInit       string
 		key           string
 		want          want
+		cfg           models.Config
 	}{
 		{
-			name:          "Получаем ссылку по ключу test1",
+			name:          "Получаем ссылку по ключу test1 Mem хранилище",
 			requestPath:   "/",
 			requestMethod: http.MethodGet,
 			keyInit:       "test1",
@@ -40,7 +42,7 @@ func TestGivHandler(t *testing.T) {
 			},
 		},
 		{
-			name:          "Получаем ссылку по ключу test2",
+			name:          "Получаем ссылку по ключу test2 Mem хранилище",
 			requestPath:   "/",
 			requestMethod: http.MethodGet,
 			keyInit:       "test2",
@@ -50,7 +52,7 @@ func TestGivHandler(t *testing.T) {
 			},
 		},
 		{
-			name:          "Получаем ссылку по не верному key test2",
+			name:          "Получаем ссылку по не верному key test2 Mem хранилище",
 			requestPath:   "/",
 			requestMethod: http.MethodGet,
 			keyInit:       "test3",
@@ -60,37 +62,47 @@ func TestGivHandler(t *testing.T) {
 				responseLocation: "https://yandex.ru/",
 			},
 		},
+		{
+			name:          "Получаем ссылку по ключу test1 File хранилище",
+			requestPath:   "/",
+			requestMethod: http.MethodGet,
+			keyInit:       "test1",
+			cfg:           models.Config{FileStoragePATH: "test1.json"},
+			want: want{
+				responseCode:     http.StatusTemporaryRedirect,
+				responseLocation: "https://github.com/HappyKod/ServiceShortLinks",
+			},
+		},
+		{
+			name:          "Получаем ссылку по ключу test2 File хранилище",
+			requestPath:   "/",
+			requestMethod: http.MethodGet,
+			keyInit:       "test2",
+			cfg:           models.Config{FileStoragePATH: "test2.json"},
+			want: want{
+				responseCode:     http.StatusTemporaryRedirect,
+				responseLocation: "https://yandex.ru/",
+			},
+		},
+		{
+			name:          "Получаем ссылку по не верному key test2 File хранилище",
+			requestPath:   "/",
+			requestMethod: http.MethodGet,
+			keyInit:       "test3",
+			key:           "test3Invalid",
+			cfg:           models.Config{FileStoragePATH: "test3.json"},
+			want: want{
+				responseCode:     http.StatusBadRequest,
+				responseLocation: "https://yandex.ru/",
+			},
+		},
 	}
-	var cfg models.Config
-	err := env.Parse(&cfg)
-	if err != nil {
-		t.Fatal(err, "Ошибка считывания конфига")
-	}
-	builder, _ := di.NewBuilder()
-	err = builder.Add(di.Def{
-		Name: "links-storage",
-		Build: func(ctn di.Container) (interface{}, error) {
-			linksStorage, err := memstorage.New()
-			if err != nil {
-				t.Fatal("Ошибка иницилизации mem_storage ", err)
-			}
-			return memstorage.MemStorage{Connect: linksStorage}, nil
-		}})
-	if err != nil {
-		t.Fatal("Ошибка иницилизации контейнера", err)
-	}
-	err = builder.Add(di.Def{
-		Name: "server-config",
-		Build: func(ctn di.Container) (interface{}, error) {
-			return cfg, nil
-		}})
-	if err != nil {
-		t.Fatal("Ошибка иницилизации контейнера", err)
-	}
-	constans.GlobalContainer = builder.Build()
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			err := container.BuildContainer(tt.cfg)
+			if err != nil {
+				t.Fatal(err)
+			}
 			if tt.key == "" {
 				tt.key = tt.keyInit
 			}
@@ -106,7 +118,14 @@ func TestGivHandler(t *testing.T) {
 			} else {
 				assert.NotEqual(t, tt.want.responseLocation, w.Header().Get("Location"))
 			}
+			if tt.cfg.FileStoragePATH != "" {
+				err = os.Remove(tt.cfg.FileStoragePATH)
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
 		})
+
 	}
 }
 
@@ -121,9 +140,10 @@ func TestPutHandler(t *testing.T) {
 		requestMethod string
 		requestBody   string
 		want          want
+		cfg           models.Config
 	}{
 		{
-			name:          "Генерируем сокращенную ссылку test1",
+			name:          "Генерируем сокращенную ссылку test1 Mem хранилище",
 			requestPath:   "/",
 			requestMethod: http.MethodPost,
 			requestBody:   "https://github.com/HappyKod/ServiceShortLinks",
@@ -132,7 +152,7 @@ func TestPutHandler(t *testing.T) {
 			},
 		},
 		{
-			name:          "Генерируем сокращенную ссылку test2",
+			name:          "Генерируем сокращенную ссылку test2 Mem хранилище",
 			requestPath:   "/",
 			requestMethod: http.MethodPost,
 			requestBody:   "https://yandex.ru/",
@@ -141,7 +161,7 @@ func TestPutHandler(t *testing.T) {
 			},
 		},
 		{
-			name:          "Получаем ошибку при генерации ссылки test3",
+			name:          "Получаем ошибку при генерации ссылки test3 Mem хранилище",
 			requestPath:   "/",
 			requestMethod: http.MethodPost,
 			requestBody:   "InvalidUrl",
@@ -149,43 +169,54 @@ func TestPutHandler(t *testing.T) {
 				responseCode: http.StatusBadRequest,
 			},
 		},
+		{
+			name:          "Генерируем сокращенную ссылку test1 FIle хранилище",
+			requestPath:   "/",
+			requestMethod: http.MethodPost,
+			requestBody:   "https://github.com/HappyKod/ServiceShortLinks",
+			cfg:           models.Config{FileStoragePATH: "test1.json"},
+			want: want{
+				responseCode: http.StatusCreated,
+			},
+		},
+		{
+			name:          "Генерируем сокращенную ссылку test2 File хранилище",
+			requestPath:   "/",
+			requestMethod: http.MethodPost,
+			requestBody:   "https://yandex.ru/",
+			cfg:           models.Config{FileStoragePATH: "test2.json"},
+			want: want{
+				responseCode: http.StatusCreated,
+			},
+		},
+		{
+			name:          "Получаем ошибку при генерации ссылки test3 File хранилище",
+			requestPath:   "/",
+			requestMethod: http.MethodPost,
+			requestBody:   "InvalidUrl",
+			cfg:           models.Config{FileStoragePATH: "test3.json"},
+			want: want{
+				responseCode: http.StatusBadRequest,
+			},
+		},
 	}
-	var cfg models.Config
-	err := env.Parse(&cfg)
-	if err != nil {
-		t.Fatal(err, "Ошибка считывания конфига")
-	}
-	builder, _ := di.NewBuilder()
-	err = builder.Add(di.Def{
-		Name: "links-storage",
-		Build: func(ctn di.Container) (interface{}, error) {
-			linksStorage, err := memstorage.New()
-			if err != nil {
-				t.Fatal("Ошибка иницилизации mem_storage ", err)
-			}
-			return memstorage.MemStorage{Connect: linksStorage}, nil
-		}})
-	if err != nil {
-		t.Fatal("Ошибка иницилизации контейнера", err)
-	}
-	err = builder.Add(di.Def{
-		Name: "server-config",
-		Build: func(ctn di.Container) (interface{}, error) {
-			return cfg, nil
-		}})
-	if err != nil {
-		t.Fatal("Ошибка иницилизации контейнера", err)
-	}
-	constans.GlobalContainer = builder.Build()
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
+			err := container.BuildContainer(tt.cfg)
+			if err != nil {
+				t.Fatal(err)
+			}
 			router := Router()
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest(tt.requestMethod, tt.requestPath, bytes.NewBuffer([]byte(tt.requestBody)))
 			router.ServeHTTP(w, req)
 			assert.Equal(t, tt.want.responseCode, w.Code)
+			if tt.cfg.FileStoragePATH != "" {
+				err := os.Remove(tt.cfg.FileStoragePATH)
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
 		})
 	}
 }
@@ -202,9 +233,10 @@ func TestGIVGET(t *testing.T) {
 		requestMethod string
 		requestBody   string
 		want          want
+		cfg           models.Config
 	}{
 		{
-			name:          "Кодируем ссылку",
+			name:          "Кодируем ссылку Mem хранилище",
 			requestPath:   "/",
 			requestMethod: http.MethodPost,
 			requestBody:   "https://yandex.ru",
@@ -213,55 +245,67 @@ func TestGIVGET(t *testing.T) {
 			},
 		},
 		{
-			name:          "Получаем ссылку по ключу",
+			name:          "Получаем ссылку по ключу Mem хранилище",
 			requestPath:   "/",
 			requestMethod: http.MethodGet,
 			want: want{
 				responseCode: http.StatusTemporaryRedirect,
 			},
 		},
+		{
+			name:          "Кодируем ссылку FIle хранилище",
+			requestPath:   "/",
+			requestMethod: http.MethodPost,
+			requestBody:   "https://yandex.ru",
+			cfg:           models.Config{FileStoragePATH: "test1.json"},
+			want: want{
+				responseCode: http.StatusCreated,
+			},
+		},
+		{
+			name:          "Получаем ссылку по ключу File хранилище",
+			requestPath:   "/",
+			requestMethod: http.MethodGet,
+			cfg:           models.Config{FileStoragePATH: "test1.json"},
+			want: want{
+				responseCode: http.StatusTemporaryRedirect,
+			},
+		},
 	}
-	var cfg models.Config
-	err := env.Parse(&cfg)
+	err := container.BuildContainer(models.Config{})
 	if err != nil {
-		t.Fatal(err, "Ошибка считывания конфига")
+		t.Fatal(err)
 	}
-	builder, _ := di.NewBuilder()
-	err = builder.Add(di.Def{
-		Name: "links-storage",
-		Build: func(ctn di.Container) (interface{}, error) {
-			linksStorage, err := memstorage.New()
-			if err != nil {
-				t.Fatal("Ошибка иницилизации mem_storage ", err)
-			}
-			return memstorage.MemStorage{Connect: linksStorage}, nil
-		}})
-	if err != nil {
-		t.Fatal("Ошибка иницилизации контейнера", err)
-	}
-	err = builder.Add(di.Def{
-		Name: "server-config",
-		Build: func(ctn di.Container) (interface{}, error) {
-			return cfg, nil
-		}})
-	if err != nil {
-		t.Fatal("Ошибка иницилизации контейнера", err)
-	}
-	constans.GlobalContainer = builder.Build()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.cfg.FileStoragePATH != "" {
+				err := container.BuildContainer(tt.cfg)
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
 			router := Router()
 			w := httptest.NewRecorder()
 			var req *http.Request
 			if tt.requestMethod == http.MethodGet {
-				req = httptest.NewRequest(http.MethodGet, Key, nil)
+				fmt.Println(Key)
+				req = httptest.NewRequest(http.MethodGet, tt.requestPath+Key, nil)
 			} else if tt.requestMethod == http.MethodPost {
 				req = httptest.NewRequest(http.MethodPost, tt.requestPath, bytes.NewBuffer([]byte(tt.requestBody)))
 			}
 			router.ServeHTTP(w, req)
+			fmt.Println(w.Body.String())
 			assert.Equal(t, tt.want.responseCode, w.Code)
 			Key = w.Body.String()
 		})
+	}
+	for _, v := range tests {
+		if v.cfg.FileStoragePATH != "" {
+			err = os.Remove(v.cfg.FileStoragePATH)
+			if err != nil {
+				log.Println(err)
+			}
+		}
 	}
 }
 
@@ -276,9 +320,10 @@ func TestPutApiHandler(t *testing.T) {
 		requestMethod string
 		requestBody   string
 		want          want
+		cfg           models.Config
 	}{
 		{
-			name:          "Генерируем сокращенную ссылку test1",
+			name:          "Генерируем сокращенную ссылку test1 Mem хранилище",
 			requestPath:   "/api/shorten",
 			requestMethod: http.MethodPost,
 			requestBody:   `{"url": "https://github.com/HappyKod/ServiceShortLinks"}`,
@@ -287,7 +332,7 @@ func TestPutApiHandler(t *testing.T) {
 			},
 		},
 		{
-			name:          "Генерируем сокращенную ссылку test2",
+			name:          "Генерируем сокращенную ссылку test2 Mem хранилище",
 			requestPath:   "/api/shorten",
 			requestMethod: http.MethodPost,
 			requestBody:   `{"url": "https://yandex.ru"}`,
@@ -296,7 +341,7 @@ func TestPutApiHandler(t *testing.T) {
 			},
 		},
 		{
-			name:          "Получаем ошибку при генерации ссылки test3",
+			name:          "Получаем ошибку при генерации ссылки test3 Mem хранилище",
 			requestPath:   "/api/shorten",
 			requestMethod: http.MethodPost,
 			requestBody:   `{"url": "InvalidUrl"}`,
@@ -305,42 +350,23 @@ func TestPutApiHandler(t *testing.T) {
 			},
 		},
 	}
-	var cfg models.Config
-	err := env.Parse(&cfg)
-	if err != nil {
-		t.Fatal(err, "Ошибка считывания конфига")
-	}
-	builder, _ := di.NewBuilder()
-	err = builder.Add(di.Def{
-		Name: "links-storage",
-		Build: func(ctn di.Container) (interface{}, error) {
-			linksStorage, err := memstorage.New()
-			if err != nil {
-				t.Fatal("Ошибка иницилизации mem_storage ", err)
-			}
-			return memstorage.MemStorage{Connect: linksStorage}, nil
-		}})
-	if err != nil {
-		t.Fatal("Ошибка иницилизации контейнера", err)
-	}
-	err = builder.Add(di.Def{
-		Name: "server-config",
-		Build: func(ctn di.Container) (interface{}, error) {
-			return cfg, nil
-		}})
-	if err != nil {
-		t.Fatal("Ошибка иницилизации контейнера", err)
-	}
-	constans.GlobalContainer = builder.Build()
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
+			err := container.BuildContainer(tt.cfg)
+			if err != nil {
+				t.Fatal(err)
+			}
 			router := Router()
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest(tt.requestMethod, tt.requestPath, bytes.NewBuffer([]byte(tt.requestBody)))
 			router.ServeHTTP(w, req)
 			assert.Equal(t, tt.want.responseCode, w.Code)
+			if tt.cfg.FileStoragePATH != "" {
+				err = os.Remove(tt.cfg.FileStoragePATH)
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
 		})
 	}
 }
@@ -357,9 +383,10 @@ func TestPutApiGET(t *testing.T) {
 		requestMethod string
 		requestBody   string
 		want          want
+		cfg           models.Config
 	}{
 		{
-			name:          "Кодируем ссылку",
+			name:          "Кодируем ссылку Mem Хранилище",
 			requestPath:   "/api/shorten",
 			requestMethod: http.MethodPost,
 			requestBody:   `{"url": "https://github.com/HappyKod/ServiceShortLinks"}`,
@@ -368,48 +395,50 @@ func TestPutApiGET(t *testing.T) {
 			},
 		},
 		{
-			name:          "Получаем ссылку по ключу",
+			name:          "Получаем ссылку по ключу Mem Хранилище",
 			requestPath:   "/",
 			requestMethod: http.MethodGet,
 			want: want{
 				responseCode: http.StatusTemporaryRedirect,
 			},
 		},
+		{
+			name:          "Кодируем ссылку File Хранилище",
+			requestPath:   "/api/shorten",
+			requestMethod: http.MethodPost,
+			requestBody:   `{"url": "https://github.com/HappyKod/ServiceShortLinks"}`,
+			cfg:           models.Config{FileStoragePATH: "test1.json"},
+			want: want{
+				responseCode: http.StatusCreated,
+			},
+		},
+		{
+			name:          "Получаем ссылку по ключу File Хранилище",
+			requestPath:   "/",
+			requestMethod: http.MethodGet,
+			cfg:           models.Config{FileStoragePATH: "test1.json"},
+			want: want{
+				responseCode: http.StatusTemporaryRedirect,
+			},
+		},
 	}
-	var cfg models.Config
-	err := env.Parse(&cfg)
+	err := container.BuildContainer(models.Config{})
 	if err != nil {
-		t.Fatal(err, "Ошибка считывания конфига")
+		t.Fatal(err)
 	}
-	builder, _ := di.NewBuilder()
-	err = builder.Add(di.Def{
-		Name: "links-storage",
-		Build: func(ctn di.Container) (interface{}, error) {
-			linksStorage, err := memstorage.New()
-			if err != nil {
-				t.Fatal("Ошибка иницилизации mem_storage ", err)
-			}
-			return memstorage.MemStorage{Connect: linksStorage}, nil
-		}})
-	if err != nil {
-		t.Fatal("Ошибка иницилизации контейнера", err)
-	}
-	err = builder.Add(di.Def{
-		Name: "server-config",
-		Build: func(ctn di.Container) (interface{}, error) {
-			return cfg, nil
-		}})
-	if err != nil {
-		t.Fatal("Ошибка иницилизации контейнера", err)
-	}
-	constans.GlobalContainer = builder.Build()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.cfg.FileStoragePATH != "" {
+				err := container.BuildContainer(tt.cfg)
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
 			router := Router()
 			w := httptest.NewRecorder()
 			var req *http.Request
 			if tt.requestMethod == http.MethodGet {
-				req = httptest.NewRequest(http.MethodGet, Key, nil)
+				req = httptest.NewRequest(http.MethodGet, tt.requestPath+Key, nil)
 				router.ServeHTTP(w, req)
 				assert.Equal(t, tt.want.responseCode, w.Code)
 			} else if tt.requestMethod == http.MethodPost {
@@ -424,5 +453,13 @@ func TestPutApiGET(t *testing.T) {
 				Key = keyMAP["result"]
 			}
 		})
+	}
+	for _, v := range tests {
+		if v.cfg.FileStoragePATH != "" {
+			err = os.Remove(v.cfg.FileStoragePATH)
+			if err != nil {
+				log.Println(err)
+			}
+		}
 	}
 }
