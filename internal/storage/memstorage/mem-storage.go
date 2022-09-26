@@ -14,14 +14,14 @@ type MemStorage struct {
 	Connect *connect
 }
 
-// New иницилизация хранилища
+// New инициализация хранилища
 func New() (*MemStorage, error) {
 	return &MemStorage{
 		Connect: &connect{cache: make(map[string]string)},
 	}, nil
 }
 
-// Ping проверка харнилища
+// Ping проверка хранилища
 func (MS MemStorage) Ping() (bool, error) {
 	return true, nil
 }
@@ -33,7 +33,7 @@ func (MS MemStorage) Get(key string) (string, error) {
 	return MS.Connect.cache[key], nil
 }
 
-// Put добавляем занчение по ключу
+// Put добавляем значение по ключу
 func (MS MemStorage) Put(key string, url string) error {
 	MS.Connect.mu.Lock()
 	MS.Connect.cache[key] = url

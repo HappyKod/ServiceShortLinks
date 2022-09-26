@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Router указание маршртуов сревера
+// Router указание маршрутов севера
 func Router() *gin.Engine {
 	r := gin.New()
 	r.Use(middleware.GzipWriter())

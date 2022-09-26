@@ -20,14 +20,14 @@ func BuildContainer(cfg models.Config) error {
 			return err
 		}
 		meStorage = store
-		log.Println("Задействован filestorage")
+		log.Println("Задействован file-storage")
 	} else {
 		store, err := memstorage.New()
 		if err != nil {
 			return err
 		}
 		meStorage = store
-		log.Println("Задействован memstorage")
+		log.Println("Задействован mem-storage")
 	}
 	builder, _ := di.NewBuilder()
 	if err := builder.Add(di.Def{

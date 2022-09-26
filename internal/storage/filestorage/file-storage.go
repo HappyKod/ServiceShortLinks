@@ -38,7 +38,7 @@ func New(FileNAME string) (*FileStorage, error) {
 	}, nil
 }
 
-// Ping проверка харнилища
+// Ping проверка хранилища
 func (FS FileStorage) Ping() (bool, error) {
 	return true, nil
 }
@@ -70,7 +70,7 @@ func (FS FileStorage) Get(key string) (string, error) {
 	return "", nil
 }
 
-// Put добавляем занчение по ключу
+// Put добавляем значение по ключу
 func (FS FileStorage) Put(key string, url string) error {
 	FS.Connect.mu.Lock()
 	defer FS.Connect.mu.Unlock()
