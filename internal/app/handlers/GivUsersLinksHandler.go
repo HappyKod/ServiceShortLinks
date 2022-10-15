@@ -51,6 +51,7 @@ func GivUsersLinksHandler(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 	}
+	c.Writer.Header().Set("content-type", "application/json")
 	_, err = c.Writer.Write(body)
 	if err != nil {
 		log.Println("Ошибка генерации Body ", c.Request.URL, string(body), err)

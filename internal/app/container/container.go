@@ -3,11 +3,11 @@ package container
 import (
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"HappyKod/ServiceShortLinks/internal/models"
-	"HappyKod/ServiceShortLinks/internal/storage/links-storage"
-	"HappyKod/ServiceShortLinks/internal/storage/links-storage/files-links-torage"
-	"HappyKod/ServiceShortLinks/internal/storage/links-storage/mem-links-storage"
-	"HappyKod/ServiceShortLinks/internal/storage/users-storage"
-	"HappyKod/ServiceShortLinks/internal/storage/users-storage/mem-users-storage"
+	"HappyKod/ServiceShortLinks/internal/storage/links_storage"
+	"HappyKod/ServiceShortLinks/internal/storage/links_storage/files_links_torage"
+	"HappyKod/ServiceShortLinks/internal/storage/links_storage/mem_links_storage"
+	"HappyKod/ServiceShortLinks/internal/storage/users_storage"
+	"HappyKod/ServiceShortLinks/internal/storage/users_storage/mem_users_storage"
 	"github.com/sarulabs/di"
 	"log"
 )
@@ -20,14 +20,14 @@ func BuildContainer(cfg models.Config) error {
 			return err
 		}
 		linksStorage = store
-		log.Println("Задействован file-links-storage")
+		log.Println("Задействован file-links_storage")
 	} else {
 		store, err := mem_links_storage.New()
 		if err != nil {
 			return err
 		}
 		linksStorage = store
-		log.Println("Задействован mem-links-storage")
+		log.Println("Задействован mem_links_storage")
 	}
 	var usersStorage users_storage.UsersStorage
 	usersStorage, err := mem_users_storage.New()
@@ -37,12 +37,12 @@ func BuildContainer(cfg models.Config) error {
 	log.Println("Задействован mem_users_storage")
 	builder, _ := di.NewBuilder()
 	if err := builder.Add(di.Def{
-		Name:  "links-storage",
+		Name:  "links_storage",
 		Build: func(ctn di.Container) (interface{}, error) { return linksStorage, nil }}); err != nil {
 		return err
 	}
 	if err := builder.Add(di.Def{
-		Name:  "users-storage",
+		Name:  "users_storage",
 		Build: func(ctn di.Container) (interface{}, error) { return usersStorage, nil }}); err != nil {
 		return err
 	}
