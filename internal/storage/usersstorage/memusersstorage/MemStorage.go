@@ -21,8 +21,8 @@ func New() (*MemUsersStorage, error) {
 }
 
 // Ping проверка хранилища
-func (MS MemUsersStorage) Ping() (bool, error) {
-	return true, nil
+func (MS MemUsersStorage) Ping() error {
+	return nil
 }
 
 // Get получаем значение по ключу

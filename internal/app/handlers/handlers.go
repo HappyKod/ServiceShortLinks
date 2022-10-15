@@ -13,6 +13,7 @@ func Router() *gin.Engine {
 	r.Use(middleware.WorkCooke())
 	r.GET("/:id", GivHandler)
 	r.POST("/", PutHandler)
+	r.GET("/ping", PingDataBaseHandler)
 	groupAPI := r.Group("/api")
 	{
 		groupAPI.GET("/user/urls", GivUsersLinksHandler)

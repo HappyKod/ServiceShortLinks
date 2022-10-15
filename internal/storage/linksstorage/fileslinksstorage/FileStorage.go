@@ -39,12 +39,12 @@ func New(FileNAME string) (*FileLinksStorage, error) {
 }
 
 // Ping проверка хранилища
-func (FS FileLinksStorage) Ping() (bool, error) {
+func (FS FileLinksStorage) Ping() error {
 	_, err := FS.Connect.file.Stat()
 	if err != nil {
-		return false, err
+		return err
 	}
-	return true, nil
+	return nil
 }
 
 // Get получаем значение по ключу
