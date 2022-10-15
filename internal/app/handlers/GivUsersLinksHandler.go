@@ -54,6 +54,7 @@ func GivUsersLinksHandler(c *gin.Context) {
 		http.Error(c.Writer, constans.ErrorReadBody, http.StatusInternalServerError)
 		return
 	}
+	c.Writer.WriteHeader(http.StatusCreated)
 	c.Writer.Header().Set("content-type", "application/json")
 	_, err = c.Writer.Write(body)
 	if err != nil {
