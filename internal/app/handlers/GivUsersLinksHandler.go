@@ -46,10 +46,13 @@ func GivUsersLinksHandler(c *gin.Context) {
 	}
 	if len(doneLinks) == 0 {
 		http.Error(c.Writer, "Сокращенных ссылок у данного пользователя не найдено", http.StatusNoContent)
+		return
 	}
 	body, err := json.Marshal(doneLinks)
 	if err != nil {
-		log.Println(err)
+		log.Println(constans.ErrorReadBody, c.Request.URL, doneLinks, err)
+		http.Error(c.Writer, constans.ErrorReadBody, http.StatusInternalServerError)
+		return
 	}
 	c.Writer.Header().Set("content-type", "application/json")
 	_, err = c.Writer.Write(body)

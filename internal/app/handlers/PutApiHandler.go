@@ -68,6 +68,7 @@ func PutAPIHandler(c *gin.Context) {
 	bytes, err := json.Marshal(map[string]string{"result": body})
 	if err != nil {
 		log.Println(constans.ErrorReadBody, c.Request.URL, string(bytes), key, err.Error())
+		http.Error(c.Writer, constans.ErrorReadBody, http.StatusInternalServerError)
 		return
 	}
 	c.Writer.WriteHeader(http.StatusCreated)
