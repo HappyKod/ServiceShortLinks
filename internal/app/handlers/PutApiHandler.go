@@ -3,7 +3,6 @@ package handlers
 import (
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"HappyKod/ServiceShortLinks/internal/models"
-	"HappyKod/ServiceShortLinks/internal/storage"
 	"HappyKod/ServiceShortLinks/utils"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
@@ -16,31 +15,26 @@ import (
 // PutAPIHandler принимает в теле запроса JSON-объект {"url":"<some_url>"}
 // и возвращает в ответ объект {"result":"<shorten_url>"}.
 func PutAPIHandler(c *gin.Context) {
-	connect := constans.GlobalContainer.Get("links-storage").(storage.Storages)
+	connect := constans.GetLinkStorage()
 	bytesStructURL, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Println("Ошибка обработки тела запроса ", c.Request.URL, err.Error())
 		http.Error(c.Writer, "Ошибка обработки тела запроса", http.StatusInternalServerError)
 		return
 	}
-	defer func(Body io.ReadCloser) {
-		err = Body.Close()
-		if err != nil {
+	defer func() {
+		if err = c.Request.Body.Close(); err != nil {
 			log.Println("Ошибка закрытия тела запроса ", err)
-			http.Error(c.Writer, "Ошибка обработки тела запроса", http.StatusInternalServerError)
-			return
 		}
-	}(c.Request.Body)
+	}()
 	var bodyRequest struct {
-		URL string `xml:"url"`
+		URL string `json:"url"`
 	}
 	err = json.Unmarshal(bytesStructURL, &bodyRequest)
 	if err != nil {
-		if err != nil {
-			log.Println("Ошибка преобразования тела запроса ", c.Request.URL, err.Error())
-			http.Error(c.Writer, "Ошибка обработки тела запроса", http.StatusInternalServerError)
-			return
-		}
+		log.Println("Ошибка преобразования тела запроса ", c.Request.URL, err.Error())
+		http.Error(c.Writer, "Ошибка обработки тела запроса", http.StatusInternalServerError)
+		return
 	}
 	if !utils.ValidatorURL(bodyRequest.URL) {
 		http.Error(c.Writer, "Ошибка ссылка не валидна", http.StatusBadRequest)
@@ -61,13 +55,10 @@ func PutAPIHandler(c *gin.Context) {
 	body, err := url.JoinPath(constans.GlobalContainer.Get("server-config").(models.Config).BaseURL, key)
 	if err != nil {
 		log.Println("Ошибка генерации ссылки", c.Request.URL, key, err.Error())
+		http.Error(c.Writer, "Ошибка генерации ссылки", http.StatusInternalServerError)
+
 	}
-	bodyResponse := struct {
-		Result string `json:"result"`
-	}{
-		body,
-	}
-	bytes, err := json.Marshal(bodyResponse)
+	bytes, err := json.Marshal(map[string]string{"result": body})
 	if err != nil {
 		log.Println("Ошибка генерации Body ", c.Request.URL, string(bytes), key, err.Error())
 		return
@@ -77,7 +68,5 @@ func PutAPIHandler(c *gin.Context) {
 	_, err = c.Writer.Write(bytes)
 	if err != nil {
 		log.Println("Ошибка генерации Body ", c.Request.URL, string(bytes), key, err.Error())
-		return
 	}
-
 }
