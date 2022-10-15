@@ -1,4 +1,4 @@
-package FilesLinksStorage
+package fileslinksstorage
 
 import (
 	"HappyKod/ServiceShortLinks/utils"

@@ -1,4 +1,4 @@
-package UsersStorage
+package usersstorage
 
 type UsersStorage interface {
 	Ping() (bool, error)

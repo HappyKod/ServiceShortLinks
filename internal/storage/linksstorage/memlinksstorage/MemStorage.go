@@ -1,4 +1,4 @@
-package MemLinksStorage
+package memlinksstorage
 
 import (
 	"HappyKod/ServiceShortLinks/utils"
