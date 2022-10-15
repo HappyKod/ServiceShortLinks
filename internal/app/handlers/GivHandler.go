@@ -16,10 +16,10 @@ func GivHandler(c *gin.Context) {
 		http.Error(c.Writer, "Ошибка задан пустой id", http.StatusBadRequest)
 		return
 	}
-	get, err := constans.GetLinkStorage().Get(key)
+	get, err := constans.GetLinksStorage().Get(key)
 	if err != nil {
-		log.Println("Ошибка получение данных из хранилища ", c.Request.URL, err.Error())
-		http.Error(c.Writer, "Ошибка получение данных из хранилища ", http.StatusInternalServerError)
+		log.Println(constans.ErrorReadStorage, c.Request.URL, err.Error())
+		http.Error(c.Writer, constans.ErrorReadStorage, http.StatusInternalServerError)
 		return
 	}
 	if get == "" {

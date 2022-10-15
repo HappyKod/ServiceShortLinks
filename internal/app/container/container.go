@@ -3,42 +3,58 @@ package container
 import (
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"HappyKod/ServiceShortLinks/internal/models"
-	"HappyKod/ServiceShortLinks/internal/storage"
-	"HappyKod/ServiceShortLinks/internal/storage/filestorage"
-	"HappyKod/ServiceShortLinks/internal/storage/memstorage"
-	"errors"
-	"fmt"
+	"HappyKod/ServiceShortLinks/internal/storage/links-storage"
+	"HappyKod/ServiceShortLinks/internal/storage/links-storage/files-links-torage"
+	"HappyKod/ServiceShortLinks/internal/storage/links-storage/mem-links-storage"
+	"HappyKod/ServiceShortLinks/internal/storage/users-storage"
+	"HappyKod/ServiceShortLinks/internal/storage/users-storage/mem-users-storage"
 	"github.com/sarulabs/di"
 	"log"
 )
 
 func BuildContainer(cfg models.Config) error {
-	var meStorage storage.Storages
+	var linksStorage links_storage.LinksStorages
 	if cfg.FileStoragePATH != "" {
-		store, err := filestorage.New(cfg.FileStoragePATH)
+		store, err := files_links_torage.New(cfg.FileStoragePATH)
 		if err != nil {
 			return err
 		}
-		meStorage = store
-		log.Println("Задействован file-storage")
+		linksStorage = store
+		log.Println("Задействован file-links-storage")
 	} else {
-		store, err := memstorage.New()
+		store, err := mem_links_storage.New()
 		if err != nil {
 			return err
 		}
-		meStorage = store
-		log.Println("Задействован mem-storage")
+		linksStorage = store
+		log.Println("Задействован mem-links-storage")
 	}
+	var usersStorage users_storage.UsersStorage
+	usersStorage, err := mem_users_storage.New()
+	if err != nil {
+		return err
+	}
+	log.Println("Задействован mem_users_storage")
 	builder, _ := di.NewBuilder()
 	if err := builder.Add(di.Def{
 		Name:  "links-storage",
-		Build: func(ctn di.Container) (interface{}, error) { return meStorage, nil }}); err != nil {
-		return errors.New(fmt.Sprint("Ошибка инициализации контейнера", err))
+		Build: func(ctn di.Container) (interface{}, error) { return linksStorage, nil }}); err != nil {
+		return err
+	}
+	if err := builder.Add(di.Def{
+		Name:  "users-storage",
+		Build: func(ctn di.Container) (interface{}, error) { return usersStorage, nil }}); err != nil {
+		return err
 	}
 	if err := builder.Add(di.Def{
 		Name:  "server-config",
 		Build: func(ctn di.Container) (interface{}, error) { return cfg, nil }}); err != nil {
-		return errors.New(fmt.Sprint("Ошибка инициализации контейнера", err))
+		return err
+	}
+	if err := builder.Add(di.Def{
+		Name:  "secret-key",
+		Build: func(ctn di.Container) (interface{}, error) { return []byte(cfg.SecretKey), nil }}); err != nil {
+		return err
 	}
 	constans.GlobalContainer = builder.Build()
 	return nil

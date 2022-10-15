@@ -21,7 +21,7 @@ func main() {
 	flag.Parse()
 	err := container.BuildContainer(cfg)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("ошибка инициализации контейнера", err)
 	}
 	router := handlers.Router()
 	server.NewServer(router)

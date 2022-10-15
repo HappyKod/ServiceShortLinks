@@ -1,4 +1,4 @@
-package filestorage
+package files_links_torage
 
 import (
 	"HappyKod/ServiceShortLinks/utils"
@@ -16,18 +16,18 @@ type connect struct {
 	mu      *sync.Mutex
 }
 
-type FileStorage struct {
+type FileLinksStorage struct {
 	Connect  *connect
 	FileNAME string
 }
 
 // New инициализации хранилища
-func New(FileNAME string) (*FileStorage, error) {
+func New(FileNAME string) (*FileLinksStorage, error) {
 	file, err := os.OpenFile(FileNAME, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0777)
 	if err != nil {
 		return nil, err
 	}
-	return &FileStorage{
+	return &FileLinksStorage{
 		Connect: &connect{
 			file:    file,
 			encoder: json.NewEncoder(file),
@@ -39,7 +39,7 @@ func New(FileNAME string) (*FileStorage, error) {
 }
 
 // Ping проверка хранилища
-func (FS FileStorage) Ping() (bool, error) {
+func (FS FileLinksStorage) Ping() (bool, error) {
 	_, err := FS.Connect.file.Stat()
 	if err != nil {
 		return false, err
@@ -48,7 +48,7 @@ func (FS FileStorage) Ping() (bool, error) {
 }
 
 // Get получаем значение по ключу
-func (FS FileStorage) Get(key string) (string, error) {
+func (FS FileLinksStorage) Get(key string) (string, error) {
 	FS.Connect.mu.Lock()
 	defer FS.Connect.mu.Unlock()
 	file, err := os.Open(FS.FileNAME)
@@ -75,7 +75,7 @@ func (FS FileStorage) Get(key string) (string, error) {
 }
 
 // Put добавляем значение по ключу
-func (FS FileStorage) Put(key string, url string) error {
+func (FS FileLinksStorage) Put(key string, url string) error {
 	FS.Connect.mu.Lock()
 	defer FS.Connect.mu.Unlock()
 	structMAP := map[string]string{key: url}
@@ -87,7 +87,7 @@ func (FS FileStorage) Put(key string, url string) error {
 }
 
 // CreateUniqKey Создаем уникальный ключ для записи
-func (FS FileStorage) CreateUniqKey() (string, error) {
+func (FS FileLinksStorage) CreateUniqKey() (string, error) {
 	var key string
 	for {
 		key = utils.GeneratorStringUUID()
@@ -103,7 +103,7 @@ func (FS FileStorage) CreateUniqKey() (string, error) {
 }
 
 // Close закрываем соединение (файл)
-func (FS FileStorage) Close() error {
+func (FS FileLinksStorage) Close() error {
 	err := FS.Connect.file.Close()
 	if err != nil {
 		return err

@@ -15,16 +15,18 @@ import (
 // PutAPIHandler принимает в теле запроса JSON-объект {"url":"<some_url>"}
 // и возвращает в ответ объект {"result":"<shorten_url>"}.
 func PutAPIHandler(c *gin.Context) {
-	connect := constans.GetLinkStorage()
+	linksStorage := constans.GetLinksStorage()
+	usersStorage := constans.GetUsersStorage()
+	userID := c.Param(constans.CookeUserIDName)
 	bytesStructURL, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		log.Println("Ошибка обработки тела запроса ", c.Request.URL, err.Error())
-		http.Error(c.Writer, "Ошибка обработки тела запроса", http.StatusInternalServerError)
+		log.Println(constans.ErrorReadBody, c.Request.URL, err.Error())
+		http.Error(c.Writer, constans.ErrorReadBody, http.StatusInternalServerError)
 		return
 	}
 	defer func() {
 		if err = c.Request.Body.Close(); err != nil {
-			log.Println("Ошибка закрытия тела запроса ", err)
+			log.Println(constans.ErrorCloseBody, err)
 		}
 	}()
 	var bodyRequest struct {
@@ -32,8 +34,8 @@ func PutAPIHandler(c *gin.Context) {
 	}
 	err = json.Unmarshal(bytesStructURL, &bodyRequest)
 	if err != nil {
-		log.Println("Ошибка преобразования тела запроса ", c.Request.URL, err.Error())
-		http.Error(c.Writer, "Ошибка обработки тела запроса", http.StatusInternalServerError)
+		log.Println(constans.ErrorReadBody, c.Request.URL, err.Error())
+		http.Error(c.Writer, constans.ErrorReadBody, http.StatusInternalServerError)
 		return
 	}
 	if !utils.ValidatorURL(bodyRequest.URL) {
@@ -41,15 +43,20 @@ func PutAPIHandler(c *gin.Context) {
 		return
 	}
 
-	key, err := connect.CreateUniqKey()
+	key, err := linksStorage.CreateUniqKey()
 	if err != nil {
-		log.Println("Ошибка получение данных из хранилища ", c.Request.URL, err.Error())
-		http.Error(c.Writer, "Ошибка получение данных из хранилища ", http.StatusInternalServerError)
+		log.Println(constans.ErrorReadStorage, c.Request.URL, err.Error())
+		http.Error(c.Writer, constans.ErrorReadStorage, http.StatusInternalServerError)
 		return
 	}
-	if err = connect.Put(key, bodyRequest.URL); err != nil {
-		log.Println("Ошибка записи данных в хранилище ", c.Request.URL, err.Error())
-		http.Error(c.Writer, "Ошибка записи данных в хранилище", http.StatusInternalServerError)
+	if err = linksStorage.Put(key, bodyRequest.URL); err != nil {
+		log.Println(constans.ErrorWriteStorage, c.Request.URL, err.Error())
+		http.Error(c.Writer, constans.ErrorWriteStorage, http.StatusInternalServerError)
+		return
+	}
+	if err = usersStorage.Put(userID, key); err != nil {
+		log.Println(constans.ErrorWriteStorage, c.Request.URL, err.Error())
+		http.Error(c.Writer, constans.ErrorWriteStorage, http.StatusInternalServerError)
 		return
 	}
 	body, err := url.JoinPath(constans.GlobalContainer.Get("server-config").(models.Config).BaseURL, key)
@@ -60,13 +67,13 @@ func PutAPIHandler(c *gin.Context) {
 	}
 	bytes, err := json.Marshal(map[string]string{"result": body})
 	if err != nil {
-		log.Println("Ошибка генерации Body ", c.Request.URL, string(bytes), key, err.Error())
+		log.Println(constans.ErrorReadBody, c.Request.URL, string(bytes), key, err.Error())
 		return
 	}
 	c.Writer.WriteHeader(http.StatusCreated)
 	c.Writer.Header().Set("content-type", "application/json")
 	_, err = c.Writer.Write(bytes)
 	if err != nil {
-		log.Println("Ошибка генерации Body ", c.Request.URL, string(bytes), key, err.Error())
+		log.Println(constans.ErrorReadBody, c.Request.URL, string(bytes), key, err.Error())
 	}
 }
