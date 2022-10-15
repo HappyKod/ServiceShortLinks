@@ -40,6 +40,10 @@ func New(FileNAME string) (*FileStorage, error) {
 
 // Ping проверка хранилища
 func (FS FileStorage) Ping() (bool, error) {
+	_, err := FS.Connect.file.Stat()
+	if err != nil {
+		return false, err
+	}
 	return true, nil
 }
 
@@ -74,8 +78,7 @@ func (FS FileStorage) Get(key string) (string, error) {
 func (FS FileStorage) Put(key string, url string) error {
 	FS.Connect.mu.Lock()
 	defer FS.Connect.mu.Unlock()
-	structMAP := make(map[string]string)
-	structMAP[key] = url
+	structMAP := map[string]string{key: url}
 	err := FS.Connect.encoder.Encode(&structMAP)
 	if err != nil {
 		return err

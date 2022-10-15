@@ -3,7 +3,6 @@ package handlers
 import (
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"HappyKod/ServiceShortLinks/internal/models"
-	"HappyKod/ServiceShortLinks/internal/storage"
 	"HappyKod/ServiceShortLinks/utils"
 	"github.com/gin-gonic/gin"
 	"io"
@@ -15,7 +14,7 @@ import (
 // PutHandler принимает в теле запроса строку URL для сокращения и
 // возвращает ответ с кодом 201 и сокращённым URL в виде текстовой строки в теле.
 func PutHandler(c *gin.Context) {
-	connect := constans.GlobalContainer.Get("links-storage").(storage.Storages)
+	connect := constans.GetLinkStorage()
 	bytesURL, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Println("Ошибка обработки тела запроса ", c.Request.URL, err.Error())

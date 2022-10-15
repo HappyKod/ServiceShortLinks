@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"HappyKod/ServiceShortLinks/internal/constans"
-	"HappyKod/ServiceShortLinks/internal/storage"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -17,7 +16,7 @@ func GivHandler(c *gin.Context) {
 		http.Error(c.Writer, "Ошибка задан пустой id", http.StatusBadRequest)
 		return
 	}
-	get, err := constans.GlobalContainer.Get("links-storage").(storage.Storages).Get(key)
+	get, err := constans.GetLinkStorage().Get(key)
 	if err != nil {
 		log.Println("Ошибка получение данных из хранилища ", c.Request.URL, err.Error())
 		http.Error(c.Writer, "Ошибка получение данных из хранилища ", http.StatusInternalServerError)

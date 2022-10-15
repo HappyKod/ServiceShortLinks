@@ -4,7 +4,6 @@ import (
 	"HappyKod/ServiceShortLinks/internal/app/container"
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"HappyKod/ServiceShortLinks/internal/models"
-	"HappyKod/ServiceShortLinks/internal/storage"
 	"bytes"
 	"fmt"
 	"github.com/go-playground/assert/v2"
@@ -106,7 +105,7 @@ func TestGivHandler(t *testing.T) {
 				tt.key = tt.keyInit
 			}
 			//Наполняем тестовыми данными
-			assert.Equal(t, constans.GlobalContainer.Get("links-storage").(storage.Storages).Put(tt.keyInit, tt.want.responseLocation), nil)
+			assert.Equal(t, constans.GetLinkStorage().Put(tt.keyInit, tt.want.responseLocation), nil)
 			router := Router()
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest(tt.requestMethod, tt.requestPath+tt.key, nil)
