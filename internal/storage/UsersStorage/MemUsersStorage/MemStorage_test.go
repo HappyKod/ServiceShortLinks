@@ -1,4 +1,4 @@
-package mem_users_storage
+package MemUsersStorage
 
 import (
 	"reflect"

@@ -1,4 +1,4 @@
-package links_storage
+package Linksstorage
 
 // LinksStorages Набор методов для работы с хранилищем
 type LinksStorages interface {

@@ -3,46 +3,46 @@ package container
 import (
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"HappyKod/ServiceShortLinks/internal/models"
-	"HappyKod/ServiceShortLinks/internal/storage/links_storage"
-	"HappyKod/ServiceShortLinks/internal/storage/links_storage/files_links_torage"
-	"HappyKod/ServiceShortLinks/internal/storage/links_storage/mem_links_storage"
-	"HappyKod/ServiceShortLinks/internal/storage/users_storage"
-	"HappyKod/ServiceShortLinks/internal/storage/users_storage/mem_users_storage"
+	"HappyKod/ServiceShortLinks/internal/storage/Linksstorage"
+	"HappyKod/ServiceShortLinks/internal/storage/Linksstorage/FilesLinksStorage"
+	"HappyKod/ServiceShortLinks/internal/storage/Linksstorage/MemLinksStorage"
+	"HappyKod/ServiceShortLinks/internal/storage/UsersStorage"
+	"HappyKod/ServiceShortLinks/internal/storage/UsersStorage/MemUsersStorage"
 	"github.com/sarulabs/di"
 	"log"
 )
 
 func BuildContainer(cfg models.Config) error {
-	var linksStorage links_storage.LinksStorages
+	var linksStorage Linksstorage.LinksStorages
 	if cfg.FileStoragePATH != "" {
-		store, err := files_links_torage.New(cfg.FileStoragePATH)
+		store, err := FilesLinksStorage.New(cfg.FileStoragePATH)
 		if err != nil {
 			return err
 		}
 		linksStorage = store
-		log.Println("Задействован file-links_storage")
+		log.Println("Задействован file-Linksstorage")
 	} else {
-		store, err := mem_links_storage.New()
+		store, err := MemLinksStorage.New()
 		if err != nil {
 			return err
 		}
 		linksStorage = store
-		log.Println("Задействован mem_links_storage")
+		log.Println("Задействован MemLinksStorage")
 	}
-	var usersStorage users_storage.UsersStorage
-	usersStorage, err := mem_users_storage.New()
+	var usersStorage UsersStorage.UsersStorage
+	usersStorage, err := MemUsersStorage.New()
 	if err != nil {
 		return err
 	}
-	log.Println("Задействован mem_users_storage")
+	log.Println("Задействован MemUsersStorage")
 	builder, _ := di.NewBuilder()
 	if err := builder.Add(di.Def{
-		Name:  "links_storage",
+		Name:  "Linksstorage",
 		Build: func(ctn di.Container) (interface{}, error) { return linksStorage, nil }}); err != nil {
 		return err
 	}
 	if err := builder.Add(di.Def{
-		Name:  "users_storage",
+		Name:  "UsersStorage",
 		Build: func(ctn di.Container) (interface{}, error) { return usersStorage, nil }}); err != nil {
 		return err
 	}

@@ -1,8 +1,8 @@
 package constans
 
 import (
-	"HappyKod/ServiceShortLinks/internal/storage/links_storage"
-	users_storage "HappyKod/ServiceShortLinks/internal/storage/users_storage"
+	"HappyKod/ServiceShortLinks/internal/storage/Linksstorage"
+	"HappyKod/ServiceShortLinks/internal/storage/UsersStorage"
 	"github.com/sarulabs/di"
 )
 
@@ -13,9 +13,9 @@ const (
 	CookeUserIDName  = "UserID"
 )
 
-func GetLinksStorage() links_storage.LinksStorages {
-	return GlobalContainer.Get("links_storage").(links_storage.LinksStorages)
+func GetLinksStorage() Linksstorage.LinksStorages {
+	return GlobalContainer.Get("Linksstorage").(Linksstorage.LinksStorages)
 }
-func GetUsersStorage() users_storage.UsersStorage {
-	return GlobalContainer.Get("users_storage").(users_storage.UsersStorage)
+func GetUsersStorage() UsersStorage.UsersStorage {
+	return GlobalContainer.Get("UsersStorage").(UsersStorage.UsersStorage)
 }
