@@ -71,7 +71,7 @@ func PutAPIBatchHandler(c *gin.Context) {
 		return
 	}
 	go func() {
-		for k, _ := range result {
+		for k := range result {
 			if err = usersStorage.Put(userID, k); err != nil {
 				log.Println(constans.ErrorWriteStorage, c.Request.URL, err.Error())
 			}
