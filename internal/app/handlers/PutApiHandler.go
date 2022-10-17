@@ -60,6 +60,7 @@ func PutAPIHandler(c *gin.Context) {
 				return
 			}
 			c.Status(http.StatusConflict)
+			c.Writer.Header().Set("content-type", "application/json")
 			uri, err := url.JoinPath(constans.GlobalContainer.Get("server-config").(models.Config).BaseURL, getKey)
 			if err != nil {
 				log.Println("ошибка генерации ссылки", c.Request.URL, getKey, err)
