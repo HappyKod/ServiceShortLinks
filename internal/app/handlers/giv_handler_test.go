@@ -105,7 +105,7 @@ func TestGivHandler(t *testing.T) {
 				tt.key = tt.keyInit
 			}
 			//Наполняем тестовыми данными
-			assert.Equal(t, constans.GetLinksStorage().Put(tt.keyInit, tt.want.responseLocation), nil)
+			assert.Equal(t, constans.GetLinksStorage().PutShortLink(tt.keyInit, tt.want.responseLocation), nil)
 			router := Router()
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest(tt.requestMethod, tt.requestPath+tt.key, nil)

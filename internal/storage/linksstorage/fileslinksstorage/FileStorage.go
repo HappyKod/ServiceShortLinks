@@ -4,6 +4,7 @@ import (
 	"HappyKod/ServiceShortLinks/utils"
 	"bufio"
 	"encoding/json"
+	"errors"
 	"log"
 	"os"
 	"sync"
@@ -47,8 +48,8 @@ func (FS FileLinksStorage) Ping() error {
 	return nil
 }
 
-// Get получаем значение по ключу
-func (FS FileLinksStorage) Get(key string) (string, error) {
+// GetShortLink получаем значение по ключу
+func (FS FileLinksStorage) GetShortLink(key string) (string, error) {
 	FS.Connect.mu.Lock()
 	defer FS.Connect.mu.Unlock()
 	file, err := os.Open(FS.FileNAME)
@@ -74,8 +75,8 @@ func (FS FileLinksStorage) Get(key string) (string, error) {
 	return "", nil
 }
 
-// Put добавляем значение по ключу
-func (FS FileLinksStorage) Put(key string, url string) error {
+// PutShortLink добавляем значение по ключу
+func (FS FileLinksStorage) PutShortLink(key string, url string) error {
 	FS.Connect.mu.Lock()
 	defer FS.Connect.mu.Unlock()
 	structMAP := map[string]string{key: url}
@@ -91,7 +92,7 @@ func (FS FileLinksStorage) CreateUniqKey() (string, error) {
 	var key string
 	for {
 		key = utils.GeneratorStringUUID()
-		url, err := FS.Get(key)
+		url, err := FS.GetShortLink(key)
 		if err != nil {
 			return "", err
 		}
@@ -111,18 +112,48 @@ func (FS FileLinksStorage) Close() error {
 	return nil
 }
 
-// ManyPut добавляем множества значений
-func (FS FileLinksStorage) ManyPut(urls []string) (map[string]string, error) {
+// ManyPutShortLink добавляем множества значений
+func (FS FileLinksStorage) ManyPutShortLink(urls []string) (map[string]string, error) {
 	shortURLS := make(map[string]string)
 	for _, url := range urls {
 		key, err := FS.CreateUniqKey()
 		if err != nil {
 			return nil, err
 		}
-		if err = FS.Put(key, url); err != nil {
+		if err = FS.PutShortLink(key, url); err != nil {
 			return nil, err
 		}
+		FS.Connect.mu.Lock()
 		shortURLS[key] = url
+		FS.Connect.mu.Unlock()
 	}
 	return shortURLS, nil
+}
+
+func (FS FileLinksStorage) GetKey(fullURL string) (string, error) {
+	FS.Connect.mu.Lock()
+	defer FS.Connect.mu.Unlock()
+	file, err := os.Open(FS.FileNAME)
+	if err != nil {
+		return "", err
+	}
+	defer func(file *os.File) {
+		err = file.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(file)
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		event := make(map[string]string)
+		if err = json.Unmarshal(scanner.Bytes(), &event); err != nil {
+			return "", err
+		}
+		for k, v := range event {
+			if v == fullURL {
+				return k, nil
+			}
+		}
+	}
+	return "", errors.New("ссылка не найдена")
 }

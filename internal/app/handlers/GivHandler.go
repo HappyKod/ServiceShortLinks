@@ -16,7 +16,7 @@ func GivHandler(c *gin.Context) {
 		http.Error(c.Writer, "Ошибка задан пустой id", http.StatusBadRequest)
 		return
 	}
-	get, err := constans.GetLinksStorage().Get(key)
+	get, err := constans.GetLinksStorage().GetShortLink(key)
 	if err != nil {
 		log.Println(constans.ErrorReadStorage, c.Request.URL, err.Error())
 		http.Error(c.Writer, constans.ErrorReadStorage, http.StatusInternalServerError)

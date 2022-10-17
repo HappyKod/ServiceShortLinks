@@ -48,15 +48,15 @@ func TestMemUsersStorage(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := MS.Put(tt.args.key, tt.args.link); (err != nil) != tt.wantErr {
-				t.Errorf("Put() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("PutShortLink() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			got, err := MS.Get(tt.args.key)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Put() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("PutShortLink() error = %v, wantErr %v", err, tt.wantErr)
 
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Get() got = %v, want %v", got, tt.want)
+				t.Errorf("GetShortLink() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

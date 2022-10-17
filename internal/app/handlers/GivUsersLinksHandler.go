@@ -32,7 +32,7 @@ func GivUsersLinksHandler(c *gin.Context) {
 		return
 	}
 	for _, key := range links {
-		fullLink, err := linksStorage.Get(key)
+		fullLink, err := linksStorage.GetShortLink(key)
 		if err != nil {
 			log.Println(constans.ErrorReadStorage, c.Request.URL, err)
 			http.Error(c.Writer, constans.ErrorReadStorage, http.StatusInternalServerError)

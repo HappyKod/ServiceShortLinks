@@ -64,7 +64,7 @@ func PutAPIBatchHandler(c *gin.Context) {
 		urls = append(urls, v.URL)
 	}
 
-	result, err := linksStorage.ManyPut(urls)
+	result, err := linksStorage.ManyPutShortLink(urls)
 	if err != nil {
 		log.Println(constans.ErrorWriteStorage, c.Request.URL, err.Error())
 		http.Error(c.Writer, constans.ErrorWriteStorage, http.StatusInternalServerError)

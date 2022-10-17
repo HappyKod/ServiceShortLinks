@@ -6,6 +6,8 @@ import (
 	"HappyKod/ServiceShortLinks/utils"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgerrcode"
+	"github.com/lib/pq"
 	"io"
 	"log"
 	"net/http"
@@ -49,7 +51,28 @@ func PutAPIHandler(c *gin.Context) {
 		http.Error(c.Writer, constans.ErrorReadStorage, http.StatusInternalServerError)
 		return
 	}
-	if err = linksStorage.Put(key, bodyRequest.URL); err != nil {
+	if err = linksStorage.PutShortLink(key, bodyRequest.URL); err != nil {
+		if err.(*pq.Error).Code == pgerrcode.UniqueViolation {
+			getKey, err := linksStorage.GetKey(bodyRequest.URL)
+			if err != nil {
+				log.Println(constans.ErrorReadStorage, c.Request.URL, err)
+				http.Error(c.Writer, constans.ErrorReadStorage, http.StatusInternalServerError)
+				return
+			}
+			c.Status(http.StatusConflict)
+			uri, err := url.JoinPath(constans.GlobalContainer.Get("server-config").(models.Config).BaseURL, getKey)
+			if err != nil {
+				log.Println("ошибка генерации ссылки", c.Request.URL, getKey, err)
+				http.Error(c.Writer, "ошибка генерации ссылки", http.StatusInternalServerError)
+			}
+			_, err = c.Writer.WriteString(uri)
+			if err != nil {
+				log.Println(constans.ErrorReadBody, c.Request.URL, err)
+				http.Error(c.Writer, constans.ErrorReadBody, http.StatusInternalServerError)
+				return
+			}
+			return
+		}
 		log.Println(constans.ErrorWriteStorage, c.Request.URL, err.Error())
 		http.Error(c.Writer, constans.ErrorWriteStorage, http.StatusInternalServerError)
 		return

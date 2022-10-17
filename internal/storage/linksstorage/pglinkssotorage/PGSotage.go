@@ -31,11 +31,11 @@ func createTable(connect *sql.DB) error {
 	return err
 }
 
-func (PGS PGLinksStorage) Put(key string, url string) error {
+func (PGS PGLinksStorage) PutShortLink(key string, url string) error {
 	_, err := PGS.connect.Exec("INSERT INTO public.urls (id, long_url) values ($1, $2);", key, url)
 	return err
 }
-func (PGS PGLinksStorage) Get(key string) (string, error) {
+func (PGS PGLinksStorage) GetShortLink(key string) (string, error) {
 	var longURL string
 	rows, err := PGS.connect.Query("SELECT long_url from public.urls where id = $1", key)
 	if err != nil {
@@ -53,7 +53,7 @@ func (PGS PGLinksStorage) CreateUniqKey() (string, error) {
 	var key string
 	for {
 		key = utils.GeneratorStringUUID()
-		url, err := PGS.Get(key)
+		url, err := PGS.GetShortLink(key)
 		if err != nil {
 			return "", err
 		}
@@ -64,8 +64,8 @@ func (PGS PGLinksStorage) CreateUniqKey() (string, error) {
 	return key, nil
 }
 
-// ManyPut добавляем множества значений
-func (PGS PGLinksStorage) ManyPut(urls []string) (map[string]string, error) {
+// ManyPutShortLink добавляем множества значений
+func (PGS PGLinksStorage) ManyPutShortLink(urls []string) (map[string]string, error) {
 	shortURLS := make(map[string]string)
 	scope, err := PGS.connect.Begin()
 	if err != nil {
@@ -87,4 +87,13 @@ func (PGS PGLinksStorage) ManyPut(urls []string) (map[string]string, error) {
 		shortURLS[key] = url
 	}
 	return shortURLS, scope.Commit()
+}
+
+func (PGS PGLinksStorage) GetKey(fullURL string) (string, error) {
+	var key string
+	err := PGS.connect.QueryRow("SELECT id FROM public.urls where long_url = $1", fullURL).Scan(&key)
+	if err != nil {
+		return "", err
+	}
+	return key, nil
 }

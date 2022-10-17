@@ -2,6 +2,7 @@ package memlinksstorage
 
 import (
 	"HappyKod/ServiceShortLinks/utils"
+	"errors"
 	"sync"
 )
 
@@ -26,15 +27,15 @@ func (MS MemLinksStorage) Ping() error {
 	return nil
 }
 
-// Get получаем значение по ключу
-func (MS MemLinksStorage) Get(key string) (string, error) {
+// GetShortLink получаем значение по ключу
+func (MS MemLinksStorage) GetShortLink(key string) (string, error) {
 	MS.Connect.mu.Lock()
 	defer MS.Connect.mu.Unlock()
 	return MS.Connect.cache[key], nil
 }
 
-// Put добавляем значение по ключу
-func (MS MemLinksStorage) Put(key string, url string) error {
+// PutShortLink добавляем значение по ключу
+func (MS MemLinksStorage) PutShortLink(key string, url string) error {
 	MS.Connect.mu.Lock()
 	MS.Connect.cache[key] = url
 	MS.Connect.mu.Unlock()
@@ -57,18 +58,32 @@ func (MS MemLinksStorage) CreateUniqKey() (string, error) {
 	return key, nil
 }
 
-// ManyPut добавляем множества значений
-func (MS MemLinksStorage) ManyPut(urls []string) (map[string]string, error) {
+// ManyPutShortLink добавляем множества значений
+func (MS MemLinksStorage) ManyPutShortLink(urls []string) (map[string]string, error) {
 	shortURLS := make(map[string]string)
 	for _, url := range urls {
 		key, err := MS.CreateUniqKey()
 		if err != nil {
 			return nil, err
 		}
-		if err = MS.Put(key, url); err != nil {
+		if err = MS.PutShortLink(key, url); err != nil {
 			return nil, err
 		}
+		MS.Connect.mu.Lock()
 		shortURLS[key] = url
+		MS.Connect.mu.Unlock()
 	}
 	return shortURLS, nil
+}
+
+func (MS MemLinksStorage) GetKey(fullURL string) (string, error) {
+	MS.Connect.mu.Lock()
+	localCache := MS.Connect.cache
+	MS.Connect.mu.Unlock()
+	for k, v := range localCache {
+		if v == fullURL {
+			return k, nil
+		}
+	}
+	return "", errors.New("ссылка не найдена")
 }
