@@ -56,3 +56,19 @@ func (MS MemLinksStorage) CreateUniqKey() (string, error) {
 	}
 	return key, nil
 }
+
+// ManyPut добавляем множества значений
+func (MS MemLinksStorage) ManyPut(urls []string) (map[string]string, error) {
+	shortURLS := make(map[string]string)
+	for _, url := range urls {
+		key, err := MS.CreateUniqKey()
+		if err != nil {
+			return nil, err
+		}
+		if err = MS.Put(key, url); err != nil {
+			return nil, err
+		}
+		shortURLS[key] = url
+	}
+	return shortURLS, nil
+}

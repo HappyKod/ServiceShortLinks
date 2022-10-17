@@ -18,6 +18,8 @@ func Router() *gin.Engine {
 	{
 		groupAPI.GET("/user/urls", GivUsersLinksHandler)
 		groupAPI.POST("/shorten", PutAPIHandler)
+		groupAPI.POST("/shorten/batch", PutAPIBatchHandler)
+
 	}
 	return r
 }

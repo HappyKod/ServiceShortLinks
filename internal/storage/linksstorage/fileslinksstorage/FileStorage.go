@@ -110,3 +110,19 @@ func (FS FileLinksStorage) Close() error {
 	}
 	return nil
 }
+
+// ManyPut добавляем множества значений
+func (FS FileLinksStorage) ManyPut(urls []string) (map[string]string, error) {
+	shortURLS := make(map[string]string)
+	for _, url := range urls {
+		key, err := FS.CreateUniqKey()
+		if err != nil {
+			return nil, err
+		}
+		if err = FS.Put(key, url); err != nil {
+			return nil, err
+		}
+		shortURLS[key] = url
+	}
+	return shortURLS, nil
+}

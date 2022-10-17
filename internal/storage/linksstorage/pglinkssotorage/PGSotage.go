@@ -63,3 +63,28 @@ func (PGS PGLinksStorage) CreateUniqKey() (string, error) {
 	}
 	return key, nil
 }
+
+// ManyPut добавляем множества значений
+func (PGS PGLinksStorage) ManyPut(urls []string) (map[string]string, error) {
+	shortURLS := make(map[string]string)
+	scope, err := PGS.connect.Begin()
+	if err != nil {
+		return nil, err
+	}
+	batch, err := scope.Prepare("INSERT INTO public.urls (id, long_url) values ($1, $2)")
+	if err != nil {
+		return nil, err
+	}
+	for _, url := range urls {
+		key, err := PGS.CreateUniqKey()
+		if err != nil {
+			return nil, err
+		}
+		_, err = batch.Exec(key, url)
+		if err != nil {
+			return nil, err
+		}
+		shortURLS[key] = url
+	}
+	return shortURLS, scope.Commit()
+}
