@@ -1,6 +1,7 @@
 package pglinkssotorage
 
 import (
+	"HappyKod/ServiceShortLinks/utils"
 	"database/sql"
 	_ "github.com/lib/pq"
 )
@@ -22,16 +23,39 @@ func (PGS PGLinksStorage) Ping() error {
 	if err != nil {
 		return err
 	}
-	return nil
+	return createTable(PGS.connect)
+}
+
+func createTable(connect *sql.DB) error {
+	_, err := connect.Exec("CREATE TABLE if not exists public.urls (\n id text,\n long_url text primary key,\n created timestamp default now());")
+	return err
 }
 
 func (PGS PGLinksStorage) Put(key string, url string) error {
-	return nil
+
+	_, err := PGS.connect.Query("INSERT INTO public.urls (id, long_url) values ($1, $2);", key, url)
+	return err
 }
 func (PGS PGLinksStorage) Get(key string) (string, error) {
-	return "", nil
+	var longUrl string
+	err := PGS.connect.QueryRow("SELECT long_url from public.urls where id = $1", key).Scan(&longUrl)
+	if err != nil {
+		return "", err
+	}
+	return longUrl, nil
 }
 
 func (PGS PGLinksStorage) CreateUniqKey() (string, error) {
-	return "", nil
+	var key string
+	for {
+		key = utils.GeneratorStringUUID()
+		url, err := PGS.Get(key)
+		if err != nil {
+			return "", err
+		}
+		if url == "" {
+			break
+		}
+	}
+	return key, nil
 }

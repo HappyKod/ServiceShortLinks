@@ -6,6 +6,7 @@ import (
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage"
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/fileslinksstorage"
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/memlinksstorage"
+	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/pglinkssotorage"
 	"HappyKod/ServiceShortLinks/internal/storage/usersstorage"
 	"HappyKod/ServiceShortLinks/internal/storage/usersstorage/memusersstorage"
 	"github.com/sarulabs/di"
@@ -14,7 +15,14 @@ import (
 
 func BuildContainer(cfg models.Config) error {
 	var linksStorage linksstorage.LinksStorages
-	if cfg.FileStoragePATH != "" {
+	if cfg.DataBaseURL != "" {
+		store, err := pglinkssotorage.New(cfg.DataBaseURL)
+		if err != nil {
+			return err
+		}
+		linksStorage = store
+		log.Println("Задействован pg-linkssotorage")
+	} else if cfg.FileStoragePATH != "" {
 		store, err := fileslinksstorage.New(cfg.FileStoragePATH)
 		if err != nil {
 			return err
@@ -27,10 +35,14 @@ func BuildContainer(cfg models.Config) error {
 			return err
 		}
 		linksStorage = store
-		log.Println("Задействован memlinksstorage")
+		log.Println("Задействован mem-linksstorage")
+	}
+	err := linksStorage.Ping()
+	if err != nil {
+		return err
 	}
 	var usersStorage usersstorage.UsersStorage
-	usersStorage, err := memusersstorage.New()
+	usersStorage, err = memusersstorage.New()
 	if err != nil {
 		return err
 	}
