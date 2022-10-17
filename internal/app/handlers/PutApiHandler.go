@@ -22,7 +22,7 @@ func PutAPIHandler(c *gin.Context) {
 	userID := c.Param(constans.CookeUserIDName)
 	bytesStructURL, err := io.ReadAll(c.Request.Body)
 	if err != nil {
-		log.Println(constans.ErrorReadBody, c.Request.URL, err.Error())
+		log.Println(constans.ErrorReadBody, c.Request.URL, err)
 		http.Error(c.Writer, constans.ErrorReadBody, http.StatusInternalServerError)
 		return
 	}
@@ -36,7 +36,7 @@ func PutAPIHandler(c *gin.Context) {
 	}
 	err = json.Unmarshal(bytesStructURL, &bodyRequest)
 	if err != nil {
-		log.Println(constans.ErrorReadBody, c.Request.URL, err.Error())
+		log.Println(constans.ErrorReadBody, c.Request.URL, err)
 		http.Error(c.Writer, constans.ErrorReadBody, http.StatusInternalServerError)
 		return
 	}
@@ -47,7 +47,7 @@ func PutAPIHandler(c *gin.Context) {
 
 	key, err := linksStorage.CreateUniqKey()
 	if err != nil {
-		log.Println(constans.ErrorReadStorage, c.Request.URL, err.Error())
+		log.Println(constans.ErrorReadStorage, c.Request.URL, err)
 		http.Error(c.Writer, constans.ErrorReadStorage, http.StatusInternalServerError)
 		return
 	}
@@ -66,7 +66,13 @@ func PutAPIHandler(c *gin.Context) {
 				log.Println("ошибка генерации ссылки", c.Request.URL, getKey, err)
 				http.Error(c.Writer, "ошибка генерации ссылки", http.StatusInternalServerError)
 			}
-			_, err = c.Writer.WriteString(uri)
+			body, err := json.Marshal(uri)
+			if err != nil {
+				log.Println(constans.ErrorReadBody, c.Request.URL, uri, err)
+				http.Error(c.Writer, constans.ErrorReadBody, http.StatusInternalServerError)
+				return
+			}
+			_, err = c.Writer.Write(body)
 			if err != nil {
 				log.Println(constans.ErrorReadBody, c.Request.URL, err)
 				http.Error(c.Writer, constans.ErrorReadBody, http.StatusInternalServerError)
@@ -74,24 +80,24 @@ func PutAPIHandler(c *gin.Context) {
 			}
 			return
 		}
-		log.Println(constans.ErrorWriteStorage, c.Request.URL, err.Error())
+		log.Println(constans.ErrorWriteStorage, c.Request.URL, err)
 		http.Error(c.Writer, constans.ErrorWriteStorage, http.StatusInternalServerError)
 		return
 	}
 	if err = usersStorage.Put(userID, key); err != nil {
-		log.Println(constans.ErrorWriteStorage, c.Request.URL, err.Error())
+		log.Println(constans.ErrorWriteStorage, c.Request.URL, err)
 		http.Error(c.Writer, constans.ErrorWriteStorage, http.StatusInternalServerError)
 		return
 	}
 	body, err := url.JoinPath(constans.GlobalContainer.Get("server-config").(models.Config).BaseURL, key)
 	if err != nil {
-		log.Println("Ошибка генерации ссылки", c.Request.URL, key, err.Error())
+		log.Println("Ошибка генерации ссылки", c.Request.URL, key, err)
 		http.Error(c.Writer, "Ошибка генерации ссылки", http.StatusInternalServerError)
 
 	}
 	bytes, err := json.Marshal(map[string]string{"result": body})
 	if err != nil {
-		log.Println(constans.ErrorReadBody, c.Request.URL, string(bytes), key, err.Error())
+		log.Println(constans.ErrorReadBody, c.Request.URL, string(bytes), key, err)
 		http.Error(c.Writer, constans.ErrorReadBody, http.StatusInternalServerError)
 		return
 	}
@@ -99,6 +105,6 @@ func PutAPIHandler(c *gin.Context) {
 	c.Writer.Header().Set("content-type", "application/json")
 	_, err = c.Writer.Write(bytes)
 	if err != nil {
-		log.Println(constans.ErrorReadBody, c.Request.URL, string(bytes), key, err.Error())
+		log.Println(constans.ErrorReadBody, c.Request.URL, string(bytes), key, err)
 	}
 }
