@@ -32,8 +32,7 @@ func createTable(connect *sql.DB) error {
 }
 
 func (PGS PGLinksStorage) Put(key string, url string) error {
-
-	_, err := PGS.connect.Query("INSERT INTO public.urls (id, long_url) values ($1, $2);", key, url)
+	_, err := PGS.connect.Exec("INSERT INTO public.urls (id, long_url) values ($1, $2);", key, url)
 	return err
 }
 func (PGS PGLinksStorage) Get(key string) (string, error) {
@@ -47,7 +46,7 @@ func (PGS PGLinksStorage) Get(key string) (string, error) {
 			return "", err
 		}
 	}
-	return longURL, nil
+	return longURL, rows.Err()
 }
 
 func (PGS PGLinksStorage) CreateUniqKey() (string, error) {
