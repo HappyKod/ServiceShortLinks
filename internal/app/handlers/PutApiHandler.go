@@ -66,13 +66,13 @@ func PutAPIHandler(c *gin.Context) {
 				log.Println("ошибка генерации ссылки", c.Request.URL, getKey, err)
 				http.Error(c.Writer, "ошибка генерации ссылки", http.StatusInternalServerError)
 			}
-			body, err := json.Marshal(uri)
+			bytes, err := json.Marshal(map[string]string{"result": uri})
 			if err != nil {
 				log.Println(constans.ErrorReadBody, c.Request.URL, uri, err)
 				http.Error(c.Writer, constans.ErrorReadBody, http.StatusInternalServerError)
 				return
 			}
-			_, err = c.Writer.Write(body)
+			_, err = c.Writer.Write(bytes)
 			if err != nil {
 				log.Println(constans.ErrorReadBody, c.Request.URL, err)
 				http.Error(c.Writer, constans.ErrorReadBody, http.StatusInternalServerError)
