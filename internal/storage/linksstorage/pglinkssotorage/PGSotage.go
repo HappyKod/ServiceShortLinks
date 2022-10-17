@@ -37,12 +37,17 @@ func (PGS PGLinksStorage) Put(key string, url string) error {
 	return err
 }
 func (PGS PGLinksStorage) Get(key string) (string, error) {
-	var longUrl string
-	err := PGS.connect.QueryRow("SELECT long_url from public.urls where id = $1", key).Scan(&longUrl)
+	var longURL string
+	rows, err := PGS.connect.Query("SELECT long_url from public.urls where id = $1", key)
 	if err != nil {
 		return "", err
 	}
-	return longUrl, nil
+	for rows.Next() {
+		if err = rows.Scan(&longURL); err != nil {
+			return "", err
+		}
+	}
+	return longURL, nil
 }
 
 func (PGS PGLinksStorage) CreateUniqKey() (string, error) {
