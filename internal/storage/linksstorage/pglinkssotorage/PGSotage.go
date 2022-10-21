@@ -1,7 +1,7 @@
 package pglinkssotorage
 
 import (
-	"HappyKod/ServiceShortLinks/utils"
+	"HappyKod/ServiceShortLinks/internal/models"
 	"database/sql"
 	_ "github.com/lib/pq"
 )
@@ -27,12 +27,12 @@ func (PGS PGLinksStorage) Ping() error {
 }
 
 func createTable(connect *sql.DB) error {
-	_, err := connect.Exec("CREATE TABLE if not exists public.urls (\n id text,\n long_url text primary key,\n created timestamp default now());")
+	_, err := connect.Exec("CREATE TABLE if not exists public.urls (id text,\nlong_url text primary key,\nuser_id text,\ncreated timestamp default now());")
 	return err
 }
 
-func (PGS PGLinksStorage) PutShortLink(key string, url string) error {
-	_, err := PGS.connect.Exec("INSERT INTO public.urls (id, long_url) values ($1, $2);", key, url)
+func (PGS PGLinksStorage) PutShortLink(key string, link models.Link) error {
+	_, err := PGS.connect.Exec("INSERT INTO public.urls (id, long_url, user_id) values ($1, $2, $3);", key, link.FullURL, link.UserID)
 	return err
 }
 func (PGS PGLinksStorage) GetShortLink(key string) (string, error) {
@@ -49,44 +49,23 @@ func (PGS PGLinksStorage) GetShortLink(key string) (string, error) {
 	return longURL, rows.Err()
 }
 
-func (PGS PGLinksStorage) CreateUniqKey() (string, error) {
-	var key string
-	for {
-		key = utils.GeneratorStringUUID()
-		url, err := PGS.GetShortLink(key)
-		if err != nil {
-			return "", err
-		}
-		if url == "" {
-			break
-		}
-	}
-	return key, nil
-}
-
 // ManyPutShortLink добавляем множества значений
-func (PGS PGLinksStorage) ManyPutShortLink(urls []string) (map[string]string, error) {
-	shortURLS := make(map[string]string)
+func (PGS PGLinksStorage) ManyPutShortLink(links []models.Link) error {
 	scope, err := PGS.connect.Begin()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	batch, err := scope.Prepare("INSERT INTO public.urls (id, long_url) values ($1, $2)")
+	batch, err := scope.Prepare("INSERT INTO public.urls (id, long_url, user_id) values ($1, $2, $3)")
 	if err != nil {
-		return nil, err
+		return err
 	}
-	for _, url := range urls {
-		key, err := PGS.CreateUniqKey()
+	for _, link := range links {
+		_, err = batch.Exec(link.ShortKey, link.FullURL, link.UserID)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		_, err = batch.Exec(key, url)
-		if err != nil {
-			return nil, err
-		}
-		shortURLS[key] = url
 	}
-	return shortURLS, scope.Commit()
+	return scope.Commit()
 }
 
 func (PGS PGLinksStorage) GetKey(fullURL string) (string, error) {
@@ -96,4 +75,20 @@ func (PGS PGLinksStorage) GetKey(fullURL string) (string, error) {
 		return "", err
 	}
 	return key, nil
+}
+
+func (PGS PGLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error) {
+	var links []models.Link
+	rows, err := PGS.connect.Query("SELECT id, long_url from public.urls where user_id = $1", UserID)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var link models.Link
+		if err = rows.Scan(&link.ShortKey, &link.FullURL); err != nil {
+			return nil, err
+		}
+		links = append(links, link)
+	}
+	return links, rows.Err()
 }

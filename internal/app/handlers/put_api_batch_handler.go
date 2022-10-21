@@ -9,7 +9,7 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/url"
+	"time"
 )
 
 // PutAPIBatchHandler принимающий в теле запроса множество URL для сокращения в формате:
@@ -31,7 +31,6 @@ import (
 //	 ]
 func PutAPIBatchHandler(c *gin.Context) {
 	linksStorage := constans.GetLinksStorage()
-	usersStorage := constans.GetUsersStorage()
 	userID := c.Param(constans.CookeUserIDName)
 	bytesStructURL, err := io.ReadAll(c.Request.Body)
 	if err != nil {
@@ -55,37 +54,33 @@ func PutAPIBatchHandler(c *gin.Context) {
 		return
 	}
 
-	var urls []string
+	var links []models.Link
 	for _, v := range bodyRequest {
 		if !utils.ValidatorURL(v.URL) {
 			http.Error(c.Writer, "Ошибка ссылка не валидна", http.StatusBadRequest)
 			return
 		}
-		urls = append(urls, v.URL)
+		links = append(links, models.Link{
+			FullURL:  v.URL,
+			ShortKey: utils.GeneratorStringUUID(),
+			UserID:   userID,
+			Created:  time.Now(),
+		})
 	}
-
-	result, err := linksStorage.ManyPutShortLink(urls)
-	if err != nil {
+	if err = linksStorage.ManyPutShortLink(links); err != nil {
 		log.Println(constans.ErrorWriteStorage, c.Request.URL, err.Error())
 		http.Error(c.Writer, constans.ErrorWriteStorage, http.StatusInternalServerError)
 		return
 	}
-	go func() {
-		for k := range result {
-			if err = usersStorage.Put(userID, k); err != nil {
-				log.Println(constans.ErrorWriteStorage, c.Request.URL, err.Error())
-			}
-		}
-	}()
 	var body []map[string]string
-	for key, uri := range result {
+	for _, link := range links {
 		for _, v := range bodyRequest {
-			if v.URL == uri {
-				shortURL, err := url.JoinPath(constans.GlobalContainer.Get("server-config").(models.Config).BaseURL, key)
+			if v.URL == link.FullURL {
+				shortURL, err := utils.GenerateURL(link.ShortKey)
 				if err != nil {
-					log.Println("Ошибка генерации ссылки", c.Request.URL, key, err.Error())
-					http.Error(c.Writer, "Ошибка генерации ссылки", http.StatusInternalServerError)
-
+					log.Println(constans.ErrorGenerateUrl, link.ShortKey, err)
+					http.Error(c.Writer, constans.ErrorGenerateUrl, http.StatusInternalServerError)
+					return
 				}
 				body = append(body, map[string]string{
 					"correlation_id": v.ID,
@@ -97,12 +92,12 @@ func PutAPIBatchHandler(c *gin.Context) {
 	}
 	bytes, err := json.Marshal(body)
 	if err != nil {
-		log.Println(constans.ErrorReadBody, c.Request.URL, string(bytes), err)
-		http.Error(c.Writer, constans.ErrorReadBody, http.StatusInternalServerError)
+		log.Println(constans.ErrorWriteBody, body, err)
+		http.Error(c.Writer, constans.ErrorWriteBody, http.StatusInternalServerError)
 		return
 	}
-	c.Writer.WriteHeader(http.StatusCreated)
-	c.Writer.Header().Set("content-type", "application/json")
+	c.Status(http.StatusCreated)
+	c.Header("content-type", "application/json")
 	_, err = c.Writer.Write(bytes)
 	if err != nil {
 		log.Println(constans.ErrorReadBody, c.Request.URL, string(bytes), err.Error())

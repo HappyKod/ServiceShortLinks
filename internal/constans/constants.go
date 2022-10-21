@@ -2,7 +2,6 @@ package constans
 
 import (
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage"
-	"HappyKod/ServiceShortLinks/internal/storage/usersstorage"
 	"github.com/sarulabs/di"
 )
 
@@ -15,7 +14,4 @@ const (
 
 func GetLinksStorage() linksstorage.LinksStorages {
 	return GlobalContainer.Get("linksstorage").(linksstorage.LinksStorages)
-}
-func GetUsersStorage() usersstorage.UsersStorage {
-	return GlobalContainer.Get("usersstorage").(usersstorage.UsersStorage)
 }

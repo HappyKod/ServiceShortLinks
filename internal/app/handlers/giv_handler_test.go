@@ -4,10 +4,8 @@ import (
 	"HappyKod/ServiceShortLinks/internal/app/container"
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"HappyKod/ServiceShortLinks/internal/models"
-	"bytes"
-	"fmt"
+	"errors"
 	"github.com/go-playground/assert/v2"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -105,7 +103,8 @@ func TestGivHandler(t *testing.T) {
 				tt.key = tt.keyInit
 			}
 			//Наполняем тестовыми данными
-			assert.Equal(t, constans.GetLinksStorage().PutShortLink(tt.keyInit, tt.want.responseLocation), nil)
+			link := models.Link{ShortKey: tt.keyInit, FullURL: tt.want.responseLocation}
+			assert.Equal(t, constans.GetLinksStorage().PutShortLink(tt.keyInit, link), nil)
 			router := Router()
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest(tt.requestMethod, tt.requestPath+tt.key, nil)
@@ -118,99 +117,11 @@ func TestGivHandler(t *testing.T) {
 			}
 			if tt.cfg.FileStoragePATH != "" {
 				err = os.Remove(tt.cfg.FileStoragePATH)
-				if err != nil {
+				if err != nil && errors.Is(os.ErrNotExist, err) {
 					t.Fatal(err)
 				}
 			}
 		})
 
-	}
-}
-
-// TestGIVPUT Тестируем связку PutHandler GivHandler
-func TestGIVPUT(t *testing.T) {
-	type want struct {
-		responseCode int
-	}
-	var Key string
-	tests := []struct {
-		name          string
-		requestPath   string
-		requestMethod string
-		requestBody   string
-		want          want
-		cfg           models.Config
-	}{
-		{
-			name:          "Кодируем ссылку Mem хранилище",
-			requestPath:   "/",
-			requestMethod: http.MethodPost,
-			requestBody:   "https://yandex.ru",
-			want: want{
-				responseCode: http.StatusCreated,
-			},
-		},
-		{
-			name:          "Получаем ссылку по ключу Mem хранилище",
-			requestPath:   "/",
-			requestMethod: http.MethodGet,
-			want: want{
-				responseCode: http.StatusTemporaryRedirect,
-			},
-		},
-		{
-			name:          "Кодируем ссылку FIle хранилище",
-			requestPath:   "/",
-			requestMethod: http.MethodPost,
-			requestBody:   "https://yandex.ru",
-			cfg:           models.Config{FileStoragePATH: "test1.json"},
-			want: want{
-				responseCode: http.StatusCreated,
-			},
-		},
-		{
-			name:          "Получаем ссылку по ключу File хранилище",
-			requestPath:   "/",
-			requestMethod: http.MethodGet,
-			cfg:           models.Config{FileStoragePATH: "test1.json"},
-			want: want{
-				responseCode: http.StatusTemporaryRedirect,
-			},
-		},
-	}
-	err := container.BuildContainer(models.Config{})
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if tt.cfg.FileStoragePATH != "" {
-				err := container.BuildContainer(tt.cfg)
-				if err != nil {
-					t.Fatal(err)
-				}
-			}
-			router := Router()
-			w := httptest.NewRecorder()
-			var req *http.Request
-			if tt.requestMethod == http.MethodGet {
-				fmt.Println(Key)
-				req = httptest.NewRequest(http.MethodGet, tt.requestPath+Key, nil)
-			} else if tt.requestMethod == http.MethodPost {
-				req = httptest.NewRequest(http.MethodPost, tt.requestPath, bytes.NewBuffer([]byte(tt.requestBody)))
-			}
-			router.ServeHTTP(w, req)
-			fmt.Println(w.Body.String())
-			assert.Equal(t, tt.want.responseCode, w.Code)
-			Key = w.Body.String()
-		})
-	}
-	for _, v := range tests {
-		if v.cfg.FileStoragePATH != "" {
-			err = os.Remove(v.cfg.FileStoragePATH)
-			if err != nil {
-				log.Println(err)
-			}
-		}
 	}
 }

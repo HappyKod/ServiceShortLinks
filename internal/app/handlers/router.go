@@ -5,8 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Router указание маршрутов севера
+// Router указание маршрутов хендрлеров
 func Router() *gin.Engine {
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	r.Use(middleware.GzipWriter())
 	r.Use(middleware.GzipReader())

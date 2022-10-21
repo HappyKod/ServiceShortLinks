@@ -7,8 +7,6 @@ import (
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/fileslinksstorage"
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/memlinksstorage"
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/pglinkssotorage"
-	"HappyKod/ServiceShortLinks/internal/storage/usersstorage"
-	"HappyKod/ServiceShortLinks/internal/storage/usersstorage/memusersstorage"
 	"github.com/sarulabs/di"
 	"log"
 )
@@ -41,21 +39,10 @@ func BuildContainer(cfg models.Config) error {
 	if err != nil {
 		return err
 	}
-	var usersStorage usersstorage.UsersStorage
-	usersStorage, err = memusersstorage.New()
-	if err != nil {
-		return err
-	}
-	log.Println("Задействован memusersstorage")
 	builder, _ := di.NewBuilder()
 	if err := builder.Add(di.Def{
 		Name:  "linksstorage",
 		Build: func(ctn di.Container) (interface{}, error) { return linksStorage, nil }}); err != nil {
-		return err
-	}
-	if err := builder.Add(di.Def{
-		Name:  "usersstorage",
-		Build: func(ctn di.Container) (interface{}, error) { return usersStorage, nil }}); err != nil {
 		return err
 	}
 	if err := builder.Add(di.Def{

@@ -1,7 +1,8 @@
 package fileslinksstorage
 
 import (
-	"HappyKod/ServiceShortLinks/utils"
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/models"
 	"bufio"
 	"encoding/json"
 	"errors"
@@ -14,7 +15,7 @@ type connect struct {
 	file    *os.File
 	encoder *json.Encoder
 	decoder *json.Decoder
-	mu      *sync.Mutex
+	mu      *sync.RWMutex
 }
 
 type FileLinksStorage struct {
@@ -33,7 +34,7 @@ func New(FileNAME string) (*FileLinksStorage, error) {
 			file:    file,
 			encoder: json.NewEncoder(file),
 			decoder: json.NewDecoder(file),
-			mu:      new(sync.Mutex),
+			mu:      new(sync.RWMutex),
 		},
 		FileNAME: FileNAME,
 	}, nil
@@ -50,8 +51,8 @@ func (FS FileLinksStorage) Ping() error {
 
 // GetShortLink получаем значение по ключу
 func (FS FileLinksStorage) GetShortLink(key string) (string, error) {
-	FS.Connect.mu.Lock()
-	defer FS.Connect.mu.Unlock()
+	FS.Connect.mu.RLock()
+	defer FS.Connect.mu.RUnlock()
 	file, err := os.Open(FS.FileNAME)
 	if err != nil {
 		return "", err
@@ -69,38 +70,37 @@ func (FS FileLinksStorage) GetShortLink(key string) (string, error) {
 			return "", err
 		}
 		if event[key] != "" {
-			return event[key], nil
+			var link models.Link
+			err = json.Unmarshal([]byte(event[key]), &link)
+			if err != nil {
+				return "", err
+			}
+			if link.FullURL != "" {
+				return link.FullURL, nil
+			}
 		}
 	}
 	return "", nil
 }
 
 // PutShortLink добавляем значение по ключу
-func (FS FileLinksStorage) PutShortLink(key string, url string) error {
+func (FS FileLinksStorage) PutShortLink(key string, link models.Link) error {
+	_, err := FS.GetKey(link.FullURL)
+	if !errors.Is(err, constans.ErrorNotFindFullUrl) {
+		return constans.ErrorNoUNIQUEFullUrl
+	}
 	FS.Connect.mu.Lock()
 	defer FS.Connect.mu.Unlock()
-	structMAP := map[string]string{key: url}
-	err := FS.Connect.encoder.Encode(&structMAP)
+	linkStr, err := json.Marshal(link)
+	if err != nil {
+		return err
+	}
+	structMAP := map[string]string{key: string(linkStr)}
+	err = FS.Connect.encoder.Encode(&structMAP)
 	if err != nil {
 		return err
 	}
 	return nil
-}
-
-// CreateUniqKey Создаем уникальный ключ для записи
-func (FS FileLinksStorage) CreateUniqKey() (string, error) {
-	var key string
-	for {
-		key = utils.GeneratorStringUUID()
-		url, err := FS.GetShortLink(key)
-		if err != nil {
-			return "", err
-		}
-		if url == "" {
-			break
-		}
-	}
-	return key, nil
 }
 
 // Close закрываем соединение (файл)
@@ -113,26 +113,18 @@ func (FS FileLinksStorage) Close() error {
 }
 
 // ManyPutShortLink добавляем множества значений
-func (FS FileLinksStorage) ManyPutShortLink(urls []string) (map[string]string, error) {
-	shortURLS := make(map[string]string)
-	for _, url := range urls {
-		key, err := FS.CreateUniqKey()
-		if err != nil {
-			return nil, err
+func (FS FileLinksStorage) ManyPutShortLink(links []models.Link) error {
+	for _, link := range links {
+		if err := FS.PutShortLink(link.ShortKey, link); err != nil {
+			return err
 		}
-		if err = FS.PutShortLink(key, url); err != nil {
-			return nil, err
-		}
-		FS.Connect.mu.Lock()
-		shortURLS[key] = url
-		FS.Connect.mu.Unlock()
 	}
-	return shortURLS, nil
+	return nil
 }
 
 func (FS FileLinksStorage) GetKey(fullURL string) (string, error) {
-	FS.Connect.mu.Lock()
-	defer FS.Connect.mu.Unlock()
+	FS.Connect.mu.RLock()
+	defer FS.Connect.mu.RUnlock()
 	file, err := os.Open(FS.FileNAME)
 	if err != nil {
 		return "", err
@@ -150,10 +142,49 @@ func (FS FileLinksStorage) GetKey(fullURL string) (string, error) {
 			return "", err
 		}
 		for k, v := range event {
-			if v == fullURL {
+			var link models.Link
+			err = json.Unmarshal([]byte(v), &link)
+			if err != nil {
+				return "", err
+			}
+			if link.FullURL == fullURL {
 				return k, nil
 			}
 		}
 	}
-	return "", errors.New("ссылка не найдена")
+	return "", constans.ErrorNotFindFullUrl
+}
+
+func (FS FileLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error) {
+	FS.Connect.mu.RLock()
+	defer FS.Connect.mu.RUnlock()
+	file, err := os.Open(FS.FileNAME)
+	if err != nil {
+		return nil, err
+	}
+	defer func(file *os.File) {
+		err = file.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(file)
+	scanner := bufio.NewScanner(file)
+	var linksUser []models.Link
+	for scanner.Scan() {
+		event := make(map[string]string)
+		if err = json.Unmarshal(scanner.Bytes(), &event); err != nil {
+			return nil, err
+		}
+		for _, v := range event {
+			var link models.Link
+			err = json.Unmarshal([]byte(v), &link)
+			if err != nil {
+				return nil, err
+			}
+			if link.UserID == UserID {
+				linksUser = append(linksUser, link)
+			}
+		}
+	}
+	return linksUser, nil
 }

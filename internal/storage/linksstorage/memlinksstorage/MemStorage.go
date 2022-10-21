@@ -1,25 +1,22 @@
 package memlinksstorage
 
 import (
-	"HappyKod/ServiceShortLinks/utils"
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/models"
 	"errors"
 	"sync"
 )
 
-type connect struct {
-	mu    sync.Mutex
-	cache map[string]string
-}
-
 type MemLinksStorage struct {
-	Connect *connect
+	mu    *sync.RWMutex
+	cache map[string]models.Link
 }
 
 // New инициализация хранилища
 func New() (*MemLinksStorage, error) {
 	return &MemLinksStorage{
-		Connect: &connect{cache: make(map[string]string)},
-	}, nil
+		cache: make(map[string]models.Link),
+		mu:    new(sync.RWMutex)}, nil
 }
 
 // Ping проверка хранилища
@@ -27,63 +24,58 @@ func (MS MemLinksStorage) Ping() error {
 	return nil
 }
 
-// GetShortLink получаем значение по ключу
+// GetShortLink получаем полную ссылку по ключу
 func (MS MemLinksStorage) GetShortLink(key string) (string, error) {
-	MS.Connect.mu.Lock()
-	defer MS.Connect.mu.Unlock()
-	return MS.Connect.cache[key], nil
+	MS.mu.RLock()
+	defer MS.mu.RUnlock()
+	return MS.cache[key].FullURL, nil
 }
 
-// PutShortLink добавляем значение по ключу
-func (MS MemLinksStorage) PutShortLink(key string, url string) error {
-	MS.Connect.mu.Lock()
-	MS.Connect.cache[key] = url
-	MS.Connect.mu.Unlock()
+// PutShortLink добавляем models.Link по ключу
+func (MS MemLinksStorage) PutShortLink(key string, link models.Link) error {
+	_, err := MS.GetKey(link.FullURL)
+	if !errors.Is(err, constans.ErrorNotFindFullUrl) {
+		return constans.ErrorNoUNIQUEFullUrl
+	}
+	MS.mu.Lock()
+	MS.cache[key] = link
+	MS.mu.Unlock()
 	return nil
 }
 
-// CreateUniqKey Создаем уникальный ключ для записи
-func (MS MemLinksStorage) CreateUniqKey() (string, error) {
-	var key string
-	var url string
-	for {
-		key = utils.GeneratorStringUUID()
-		MS.Connect.mu.Lock()
-		MS.Connect.cache[key] = url
-		MS.Connect.mu.Unlock()
-		if url == "" {
-			break
+// ManyPutShortLink добавляем множества models.Link
+func (MS MemLinksStorage) ManyPutShortLink(links []models.Link) error {
+	for _, link := range links {
+		if err := MS.PutShortLink(link.ShortKey, link); err != nil {
+			return err
 		}
 	}
-	return key, nil
+	return nil
 }
 
-// ManyPutShortLink добавляем множества значений
-func (MS MemLinksStorage) ManyPutShortLink(urls []string) (map[string]string, error) {
-	shortURLS := make(map[string]string)
-	for _, url := range urls {
-		key, err := MS.CreateUniqKey()
-		if err != nil {
-			return nil, err
-		}
-		if err = MS.PutShortLink(key, url); err != nil {
-			return nil, err
-		}
-		MS.Connect.mu.Lock()
-		shortURLS[key] = url
-		MS.Connect.mu.Unlock()
-	}
-	return shortURLS, nil
-}
-
+// GetKey получаем значение ключа по полной ссылке
 func (MS MemLinksStorage) GetKey(fullURL string) (string, error) {
-	MS.Connect.mu.Lock()
-	localCache := MS.Connect.cache
-	MS.Connect.mu.Unlock()
-	for k, v := range localCache {
-		if v == fullURL {
+	MS.mu.RLock()
+	localCache := MS.cache
+	MS.mu.RUnlock()
+	for k, link := range localCache {
+		if link.FullURL == fullURL {
 			return k, nil
 		}
 	}
-	return "", errors.New("ссылка не найдена")
+	return "", constans.ErrorNotFindFullUrl
+}
+
+// GetShortLinkUser получаем все models.Link который добавил пользователь
+func (MS MemLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error) {
+	MS.mu.RLock()
+	localCache := MS.cache
+	MS.mu.RUnlock()
+	var linksUser []models.Link
+	for _, link := range localCache {
+		if link.UserID == UserID {
+			linksUser = append(linksUser, link)
+		}
+	}
+	return linksUser, nil
 }
