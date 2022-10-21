@@ -78,8 +78,8 @@ func PutAPIBatchHandler(c *gin.Context) {
 			if v.URL == link.FullURL {
 				shortURL, err := utils.GenerateURL(link.ShortKey)
 				if err != nil {
-					log.Println(constans.ErrorGenerateUrl, link.ShortKey, err)
-					http.Error(c.Writer, constans.ErrorGenerateUrl, http.StatusInternalServerError)
+					log.Println(constans.ErrorGenerateURL, link.ShortKey, err)
+					http.Error(c.Writer, constans.ErrorGenerateURL, http.StatusInternalServerError)
 					return
 				}
 				body = append(body, map[string]string{

@@ -86,8 +86,8 @@ func (FS FileLinksStorage) GetShortLink(key string) (string, error) {
 // PutShortLink добавляем значение по ключу
 func (FS FileLinksStorage) PutShortLink(key string, link models.Link) error {
 	_, err := FS.GetKey(link.FullURL)
-	if !errors.Is(err, constans.ErrorNotFindFullUrl) {
-		return constans.ErrorNoUNIQUEFullUrl
+	if !errors.Is(err, constans.ErrorNotFindFullURL) {
+		return constans.ErrorNoUNIQUEFullURL
 	}
 	FS.Connect.mu.Lock()
 	defer FS.Connect.mu.Unlock()
@@ -152,7 +152,7 @@ func (FS FileLinksStorage) GetKey(fullURL string) (string, error) {
 			}
 		}
 	}
-	return "", constans.ErrorNotFindFullUrl
+	return "", constans.ErrorNotFindFullURL
 }
 
 func (FS FileLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error) {

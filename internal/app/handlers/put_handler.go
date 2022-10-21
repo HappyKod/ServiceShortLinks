@@ -34,7 +34,7 @@ func PutHandler(c *gin.Context) {
 	}()
 	fullURL := string(bytesURL)
 	if !utils.ValidatorURL(fullURL) {
-		http.Error(c.Writer, constans.ErrorInvalidUrl, http.StatusBadRequest)
+		http.Error(c.Writer, constans.ErrorInvalidURL, http.StatusBadRequest)
 		return
 	}
 	link := models.Link{
@@ -52,7 +52,7 @@ func PutHandler(c *gin.Context) {
 				return
 			}
 		} else {
-			if !errors.Is(constans.ErrorNoUNIQUEFullUrl, err) {
+			if !errors.Is(constans.ErrorNoUNIQUEFullURL, err) {
 				log.Println(constans.ErrorWriteStorage, c.Request.URL, err)
 				http.Error(c.Writer, constans.ErrorWriteStorage, http.StatusInternalServerError)
 				return
@@ -72,8 +72,8 @@ func PutHandler(c *gin.Context) {
 	}
 	uri, err := utils.GenerateURL(key)
 	if err != nil {
-		log.Println(constans.ErrorGenerateUrl, key, err)
-		http.Error(c.Writer, constans.ErrorGenerateUrl, http.StatusInternalServerError)
+		log.Println(constans.ErrorGenerateURL, key, err)
+		http.Error(c.Writer, constans.ErrorGenerateURL, http.StatusInternalServerError)
 		return
 	}
 	_, err = c.Writer.WriteString(uri)

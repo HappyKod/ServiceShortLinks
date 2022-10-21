@@ -59,7 +59,7 @@ func PutAPIHandler(c *gin.Context) {
 				return
 			}
 		} else {
-			if !errors.Is(constans.ErrorNoUNIQUEFullUrl, err) {
+			if !errors.Is(constans.ErrorNoUNIQUEFullURL, err) {
 				log.Println(constans.ErrorWriteStorage, c.Request.URL, err)
 				http.Error(c.Writer, constans.ErrorWriteStorage, http.StatusInternalServerError)
 				return
@@ -78,8 +78,8 @@ func PutAPIHandler(c *gin.Context) {
 	}
 	body, err := utils.GenerateURL(key)
 	if err != nil {
-		log.Println(constans.ErrorGenerateUrl, key, err)
-		http.Error(c.Writer, constans.ErrorGenerateUrl, http.StatusInternalServerError)
+		log.Println(constans.ErrorGenerateURL, key, err)
+		http.Error(c.Writer, constans.ErrorGenerateURL, http.StatusInternalServerError)
 		return
 	}
 	bytes, err := json.Marshal(map[string]string{"result": body})

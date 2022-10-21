@@ -10,11 +10,11 @@ const (
 	ErrorGetKeyStorage  = "ошибка при получении значение ключа по полной ссылке"
 	ErrorWriteStorage   = "ошибка при записи ссылки в хранилище"
 	ErrorConnectStorage = "ошибка при попытки создать подключение"
-	ErrorInvalidUrl     = "ошибка ссылка не валидна"
-	ErrorGenerateUrl    = "ошибка генерации ссылки"
+	ErrorInvalidURL     = "ошибка ссылка не валидна"
+	ErrorGenerateURL    = "ошибка генерации ссылки"
 )
 
 var (
-	ErrorNotFindFullUrl  = errors.New("ошибка полная ссылка не найдена")
-	ErrorNoUNIQUEFullUrl = errors.New("ошибка полная ссылка не уникальна")
+	ErrorNotFindFullURL  = errors.New("ошибка полная ссылка не найдена")
+	ErrorNoUNIQUEFullURL = errors.New("ошибка полная ссылка не уникальна")
 )

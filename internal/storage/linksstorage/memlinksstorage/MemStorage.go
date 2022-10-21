@@ -34,8 +34,8 @@ func (MS MemLinksStorage) GetShortLink(key string) (string, error) {
 // PutShortLink добавляем models.Link по ключу
 func (MS MemLinksStorage) PutShortLink(key string, link models.Link) error {
 	_, err := MS.GetKey(link.FullURL)
-	if !errors.Is(err, constans.ErrorNotFindFullUrl) {
-		return constans.ErrorNoUNIQUEFullUrl
+	if !errors.Is(err, constans.ErrorNotFindFullURL) {
+		return constans.ErrorNoUNIQUEFullURL
 	}
 	MS.mu.Lock()
 	MS.cache[key] = link
@@ -63,7 +63,7 @@ func (MS MemLinksStorage) GetKey(fullURL string) (string, error) {
 			return k, nil
 		}
 	}
-	return "", constans.ErrorNotFindFullUrl
+	return "", constans.ErrorNotFindFullURL
 }
 
 // GetShortLinkUser получаем все models.Link который добавил пользователь

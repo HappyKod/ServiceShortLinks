@@ -41,12 +41,14 @@ func GzipWriter() gin.HandlerFunc {
 			}
 			return
 		}
-		defer func(gz *gzip.Writer) {
-			err = gz.Close()
-			if err != nil {
-				log.Println("Ошибка не получилось закрыть gzip.Writer", err)
+		defer func() {
+			if c.Writer.Size() > 0 {
+				err = gz.Close()
+				if err != nil {
+					log.Println("Ошибка не получилось закрыть gzip.Writer", err)
+				}
 			}
-		}(gz)
+		}()
 		// передаём обработчику страницы переменную типа gzipWriter для вывода данных
 		c.Writer = &gzipWriter{c.Writer, gz}
 		c.Writer.Header().Set("Content-Encoding", "gzip")

@@ -32,8 +32,8 @@ func GivUsersLinksHandler(c *gin.Context) {
 	for _, link := range links {
 		shortLink, err := utils.GenerateURL(link.ShortKey)
 		if err != nil {
-			log.Println(constans.ErrorGenerateUrl, link.ShortKey, err)
-			http.Error(c.Writer, constans.ErrorGenerateUrl, http.StatusInternalServerError)
+			log.Println(constans.ErrorGenerateURL, link.ShortKey, err)
+			http.Error(c.Writer, constans.ErrorGenerateURL, http.StatusInternalServerError)
 			return
 		}
 		doneLinks = append(doneLinks, map[string]string{"short_url": shortLink, "original_url": link.FullURL})
