@@ -56,9 +56,8 @@ func (MS MemLinksStorage) ManyPutShortLink(links []models.Link) error {
 // GetKey получаем значение ключа по полной ссылке
 func (MS MemLinksStorage) GetKey(fullURL string) (string, error) {
 	MS.mu.RLock()
-	localCache := MS.cache
-	MS.mu.RUnlock()
-	for k, link := range localCache {
+	defer MS.mu.RUnlock()
+	for k, link := range MS.cache {
 		if link.FullURL == fullURL {
 			return k, nil
 		}
