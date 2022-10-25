@@ -46,7 +46,7 @@ func WorkCooke() gin.HandlerFunc {
 // generateCookie генерируем новую cooke
 func generateCookie(c *gin.Context) {
 	h := hmac.New(sha256.New, constans.GlobalContainer.Get("secret-key").([]byte))
-	userID := []byte(utils.GeneratorStringUUID()[:16])
+	userID := []byte(utils.GeneratorStringUUID()[:constans.CookeUserIDLen])
 	h.Write(userID)
 	dst := h.Sum(nil)
 	var cooke []byte
@@ -65,14 +65,14 @@ func validCookie(c *gin.Context, cooke string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if len(data[:]) < 16 {
+	if len(data[:]) < constans.CookeUserIDLen {
 		return false, errors.New("длина cooke не соответствует требованиям")
 	}
 	h := hmac.New(sha256.New, constans.GlobalContainer.Get("secret-key").([]byte))
-	h.Write(data[:16])
+	h.Write(data[:constans.CookeUserIDLen])
 	sign := h.Sum(nil)
-	if hmac.Equal(sign, data[16:]) {
-		c.AddParam(constans.CookeUserIDName, string(data[:16]))
+	if hmac.Equal(sign, data[constans.CookeUserIDLen:]) {
+		c.AddParam(constans.CookeUserIDName, string(data[:constans.CookeUserIDLen]))
 		return true, nil
 	}
 	return false, nil

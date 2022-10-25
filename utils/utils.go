@@ -11,7 +11,7 @@ import (
 // ValidatorURL валидирует ссылку
 func ValidatorURL(rawText string) bool {
 	var re = regexp.MustCompile(`(\b(https?)://)?[-A-Za-z0-9+&@#/%?=~_|!:,.;]+\.[-A-Za-z0-9+&@#/%=~_|]+`)
-	return re.Match([]byte(rawText))
+	return re.MatchString(rawText)
 }
 
 // GeneratorStringUUID создает уникальный uuid

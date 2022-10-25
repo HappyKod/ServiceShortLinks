@@ -37,16 +37,12 @@ func (PGS PGLinksStorage) PutShortLink(key string, link models.Link) error {
 }
 func (PGS PGLinksStorage) GetShortLink(key string) (string, error) {
 	var longURL string
-	rows, err := PGS.connect.Query("SELECT long_url from public.urls where id = $1", key)
-	if err != nil {
+	row := PGS.connect.QueryRow("SELECT long_url from public.urls where id = $1", key)
+	err := row.Scan(&longURL)
+	if err != nil && err != sql.ErrNoRows {
 		return "", err
 	}
-	for rows.Next() {
-		if err = rows.Scan(&longURL); err != nil {
-			return "", err
-		}
-	}
-	return longURL, rows.Err()
+	return longURL, row.Err()
 }
 
 // ManyPutShortLink добавляем множества значений
