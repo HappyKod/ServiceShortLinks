@@ -68,10 +68,9 @@ func (MS MemLinksStorage) GetKey(fullURL string) (string, error) {
 // GetShortLinkUser получаем все models.Link который добавил пользователь
 func (MS MemLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error) {
 	MS.mu.RLock()
-	localCache := MS.cache
-	MS.mu.RUnlock()
+	defer MS.mu.RUnlock()
 	var linksUser []models.Link
-	for _, link := range localCache {
+	for _, link := range MS.cache {
 		if link.UserID == UserID {
 			linksUser = append(linksUser, link)
 		}
