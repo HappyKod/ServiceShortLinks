@@ -45,6 +45,5 @@ func DelUsersLinksHandler(c *gin.Context) {
 			log.Println(constans.ErrorUpdateStorage, c.Request.URL, err)
 		}
 	}()
-	c.Status(http.StatusAccepted)
-	c.String(http.StatusCreated, "Ваш запрос на удаление успешно принят")
+	c.String(http.StatusAccepted, "Ваш запрос на удаление успешно принят")
 }
