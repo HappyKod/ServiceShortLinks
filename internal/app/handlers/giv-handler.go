@@ -16,17 +16,21 @@ func GivHandler(c *gin.Context) {
 		http.Error(c.Writer, "Ошибка задан пустой id", http.StatusBadRequest)
 		return
 	}
-	get, err := constans.GetLinksStorage().GetShortLink(key)
+	link, err := constans.GetLinksStorage().GetShortLink(key)
 	if err != nil {
 		log.Println(constans.ErrorReadStorage, c.Request.URL, err.Error())
 		http.Error(c.Writer, constans.ErrorReadStorage, http.StatusInternalServerError)
 		return
 	}
-	if get == "" {
+	if link.FullURL == "" {
 		http.Error(c.Writer, "Ошибка по ключу ничего не нашлось", http.StatusBadRequest)
 		return
 	}
+	if link.Del {
+		c.String(http.StatusGone, "данная ссылка больше не доступна")
+		return
+	}
 	c.Writer.Header().Set("Content-Type", "text/plain")
-	c.Writer.Header().Add("Location", get)
+	c.Writer.Header().Add("Location", link.FullURL)
 	c.Writer.WriteHeader(http.StatusTemporaryRedirect)
 }

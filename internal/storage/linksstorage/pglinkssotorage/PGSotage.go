@@ -27,7 +27,7 @@ func (PGS PGLinksStorage) Ping() error {
 }
 
 func createTable(connect *sql.DB) error {
-	_, err := connect.Exec("CREATE TABLE if not exists public.urls (id text,\nlong_url text primary key,\nuser_id text,\ncreated timestamp default now());")
+	_, err := connect.Exec("CREATE TABLE if not exists public.urls (id text,\n                                        long_url text primary key,\n                                        user_id text,\n                                        del bool default false,\n                                        created timestamp default now());")
 	return err
 }
 
@@ -35,14 +35,14 @@ func (PGS PGLinksStorage) PutShortLink(key string, link models.Link) error {
 	_, err := PGS.connect.Exec("INSERT INTO public.urls (id, long_url, user_id) values ($1, $2, $3);", key, link.FullURL, link.UserID)
 	return err
 }
-func (PGS PGLinksStorage) GetShortLink(key string) (string, error) {
-	var longURL string
-	row := PGS.connect.QueryRow("SELECT long_url from public.urls where id = $1", key)
-	err := row.Scan(&longURL)
+func (PGS PGLinksStorage) GetShortLink(key string) (models.Link, error) {
+	var link models.Link
+	row := PGS.connect.QueryRow("SELECT long_url, del from public.urls where id = $1", key)
+	err := row.Scan(&link.FullURL, &link.Del)
 	if err != nil && err != sql.ErrNoRows {
-		return "", err
+		return link, err
 	}
-	return longURL, row.Err()
+	return link, row.Err()
 }
 
 // ManyPutShortLink добавляем множества значений
@@ -87,4 +87,22 @@ func (PGS PGLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error)
 		links = append(links, link)
 	}
 	return links, rows.Err()
+}
+
+func (PGS PGLinksStorage) DeleteShortLinkUser(UserID string, keys []string) error {
+	scope, err := PGS.connect.Begin()
+	if err != nil {
+		return err
+	}
+	batch, err := scope.Prepare("update public.urls set del = true\nwhere true\n  and user_id = $1 \n  and id = $2")
+	if err != nil {
+		return err
+	}
+	for _, link := range keys {
+		_, err = batch.Exec(UserID, link)
+		if err != nil {
+			return err
+		}
+	}
+	return scope.Commit()
 }

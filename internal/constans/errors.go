@@ -9,6 +9,7 @@ const (
 	ErrorReadStorage    = "ошибка при чтении данных из хранилища"
 	ErrorGetKeyStorage  = "ошибка при получении значение ключа по полной ссылке"
 	ErrorWriteStorage   = "ошибка при записи ссылки в хранилище"
+	ErrorUpdateStorage  = "ошибка при обновлении данных в хранилище"
 	ErrorConnectStorage = "ошибка при попытки создать подключение"
 	ErrorInvalidURL     = "ошибка ссылка не валидна"
 	ErrorGenerateURL    = "ошибка генерации ссылки"

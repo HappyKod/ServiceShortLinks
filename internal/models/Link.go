@@ -6,5 +6,6 @@ type Link struct {
 	ShortKey string
 	FullURL  string
 	UserID   string
+	Del      bool
 	Created  time.Time
 }

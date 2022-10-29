@@ -50,12 +50,12 @@ func (FS FileLinksStorage) Ping() error {
 }
 
 // GetShortLink получаем значение по ключу
-func (FS FileLinksStorage) GetShortLink(key string) (string, error) {
+func (FS FileLinksStorage) GetShortLink(key string) (models.Link, error) {
 	FS.Connect.mu.RLock()
 	defer FS.Connect.mu.RUnlock()
 	file, err := os.Open(FS.FileNAME)
 	if err != nil {
-		return "", err
+		return models.Link{}, err
 	}
 	defer func(file *os.File) {
 		err = file.Close()
@@ -67,20 +67,20 @@ func (FS FileLinksStorage) GetShortLink(key string) (string, error) {
 	for scanner.Scan() {
 		event := make(map[string]string)
 		if err = json.Unmarshal(scanner.Bytes(), &event); err != nil {
-			return "", err
+			return models.Link{}, err
 		}
 		if event[key] != "" {
 			var link models.Link
 			err = json.Unmarshal([]byte(event[key]), &link)
 			if err != nil {
-				return "", err
+				return models.Link{}, err
 			}
 			if link.FullURL != "" {
-				return link.FullURL, nil
+				return link, nil
 			}
 		}
 	}
-	return "", nil
+	return models.Link{}, nil
 }
 
 // PutShortLink добавляем значение по ключу
@@ -187,4 +187,8 @@ func (FS FileLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error
 		}
 	}
 	return linksUser, nil
+}
+
+func (FS FileLinksStorage) DeleteShortLinkUser(UserID string, keys []string) error {
+	return nil
 }

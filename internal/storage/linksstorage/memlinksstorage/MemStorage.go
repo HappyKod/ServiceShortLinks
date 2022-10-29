@@ -25,10 +25,10 @@ func (MS MemLinksStorage) Ping() error {
 }
 
 // GetShortLink получаем полную ссылку по ключу
-func (MS MemLinksStorage) GetShortLink(key string) (string, error) {
+func (MS MemLinksStorage) GetShortLink(key string) (models.Link, error) {
 	MS.mu.RLock()
 	defer MS.mu.RUnlock()
-	return MS.cache[key].FullURL, nil
+	return MS.cache[key], nil
 }
 
 // PutShortLink добавляем models.Link по ключу
@@ -76,4 +76,17 @@ func (MS MemLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error)
 		}
 	}
 	return linksUser, nil
+}
+
+func (MS MemLinksStorage) DeleteShortLinkUser(UserID string, keys []string) error {
+	for _, key := range keys {
+		MS.mu.Lock()
+		if MS.cache[key].UserID == UserID {
+			delLink := MS.cache[key]
+			delLink.Del = true
+			MS.cache[key] = delLink
+		}
+		MS.mu.Unlock()
+	}
+	return nil
 }
