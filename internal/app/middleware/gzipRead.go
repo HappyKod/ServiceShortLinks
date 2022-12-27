@@ -3,10 +3,11 @@ package middleware
 import (
 	"bytes"
 	"compress/gzip"
-	"github.com/gin-gonic/gin"
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // GzipReader Обработчик gzip сжатия

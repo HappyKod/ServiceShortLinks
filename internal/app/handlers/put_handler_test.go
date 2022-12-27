@@ -4,10 +4,11 @@ import (
 	"HappyKod/ServiceShortLinks/internal/app/container"
 	"HappyKod/ServiceShortLinks/internal/models"
 	"bytes"
-	"github.com/go-playground/assert/v2"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/go-playground/assert/v2"
 )
 
 func TestPutHandler(t *testing.T) {

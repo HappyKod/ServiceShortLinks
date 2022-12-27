@@ -2,6 +2,7 @@ package constans
 
 import (
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage"
+
 	"github.com/sarulabs/di"
 )
 

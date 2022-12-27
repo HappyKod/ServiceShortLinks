@@ -7,8 +7,9 @@ import (
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/fileslinksstorage"
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/memlinksstorage"
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/pglinkssotorage"
-	"github.com/sarulabs/di"
 	"log"
+
+	"github.com/sarulabs/di"
 )
 
 func BuildContainer(cfg models.Config) error {
