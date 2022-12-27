@@ -6,13 +6,14 @@ import (
 	"HappyKod/ServiceShortLinks/utils"
 	"encoding/json"
 	"errors"
-	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgerrcode"
-	"github.com/lib/pq"
 	"io"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgerrcode"
+	"github.com/lib/pq"
 )
 
 // PutAPIHandler принимает в теле запроса JSON-объект {"url":"<some_url>"}

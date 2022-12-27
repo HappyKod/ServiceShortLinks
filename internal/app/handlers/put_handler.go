@@ -5,13 +5,14 @@ import (
 	"HappyKod/ServiceShortLinks/internal/models"
 	"HappyKod/ServiceShortLinks/utils"
 	"errors"
-	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgerrcode"
-	"github.com/lib/pq"
 	"io"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgerrcode"
+	"github.com/lib/pq"
 )
 
 // PutHandler принимает в теле запроса строку URL для сокращения и

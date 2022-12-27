@@ -6,8 +6,9 @@ import (
 	"HappyKod/ServiceShortLinks/internal/app/server"
 	"HappyKod/ServiceShortLinks/internal/models"
 	"flag"
-	"github.com/caarlos0/env/v6"
 	"log"
+
+	"github.com/caarlos0/env/v6"
 )
 
 func main() {

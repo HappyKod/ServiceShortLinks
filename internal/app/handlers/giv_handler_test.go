@@ -5,11 +5,12 @@ import (
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"HappyKod/ServiceShortLinks/internal/models"
 	"errors"
-	"github.com/go-playground/assert/v2"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"github.com/go-playground/assert/v2"
 )
 
 // TestGivHandler тест метода GivHandler

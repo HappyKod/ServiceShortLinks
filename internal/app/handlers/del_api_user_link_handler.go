@@ -3,10 +3,11 @@ package handlers
 import (
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // DelUsersLinksHandler принимает список идентификаторов
