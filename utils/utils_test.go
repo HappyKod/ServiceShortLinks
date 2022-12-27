@@ -20,3 +20,32 @@ func BenchmarkGeneratorStringUUID(b *testing.B) {
 		}
 	})
 }
+
+func TestValidatorURL(t *testing.T) {
+	type args struct {
+		rawText string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "valid",
+			args: args{"https://yandex.ru/"},
+			want: true,
+		},
+		{
+			name: "invalid",
+			args: args{"yandex.ru/"},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ValidatorURL(tt.args.rawText); got != tt.want {
+				t.Errorf("ValidatorURL() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -5,6 +5,7 @@ import (
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"HappyKod/ServiceShortLinks/internal/models"
 	"errors"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -12,6 +13,24 @@ import (
 
 	"github.com/go-playground/assert/v2"
 )
+
+func ExampleGivHandler() {
+	cfg := models.Config{}
+	key := "test1"
+	err := container.BuildContainer(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+	link := models.Link{ShortKey: key, FullURL: "https://github.com/HappyKod/ServiceShortLinks"}
+	err = constans.GetLinksStorage().PutShortLink(key, link)
+	if err != nil {
+		log.Fatal(err)
+	}
+	router := Router()
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/"+key, nil)
+	router.ServeHTTP(w, req)
+}
 
 // TestGivHandler тест метода GivHandler
 func TestGivHandler(t *testing.T) {
