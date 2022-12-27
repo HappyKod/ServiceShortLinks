@@ -12,6 +12,7 @@ func BenchmarkValidatorURL(b *testing.B) {
 }
 
 func BenchmarkGeneratorStringUUID(b *testing.B) {
+	b.ReportAllocs()
 	b.Run(b.Name(), func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			GeneratorStringUUID()
