@@ -4,26 +4,12 @@ import (
 	"HappyKod/ServiceShortLinks/internal/app/container"
 	"HappyKod/ServiceShortLinks/internal/models"
 	"bytes"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/go-playground/assert/v2"
 )
-
-func ExamplePutHandler() {
-	cfg := models.Config{}
-	err := container.BuildContainer(cfg)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	router := Router()
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte("https://github.com/HappyKod/ServiceShortLinks")))
-	router.ServeHTTP(w, req)
-}
 
 func TestPutHandler(t *testing.T) {
 	type want struct {

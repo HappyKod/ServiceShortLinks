@@ -11,6 +11,7 @@ type PGLinksStorage struct {
 	connect *sql.DB
 }
 
+// New инициализация хранилища
 func New(url string) (*PGLinksStorage, error) {
 	connect, err := sql.Open("postgres", url)
 	if err != nil {
@@ -19,6 +20,7 @@ func New(url string) (*PGLinksStorage, error) {
 	return &PGLinksStorage{connect: connect}, nil
 }
 
+// Ping проверка хранилища
 func (PGS PGLinksStorage) Ping() error {
 	err := PGS.connect.Ping()
 	if err != nil {
@@ -32,10 +34,13 @@ func createTable(connect *sql.DB) error {
 	return err
 }
 
+// PutShortLink добавляем models.Link по ключу
 func (PGS PGLinksStorage) PutShortLink(key string, link models.Link) error {
 	_, err := PGS.connect.Exec("INSERT INTO public.urls (id, long_url, user_id) values ($1, $2, $3);", key, link.FullURL, link.UserID)
 	return err
 }
+
+// GetShortLink получаем полную ссылку по ключу
 func (PGS PGLinksStorage) GetShortLink(key string) (models.Link, error) {
 	var link models.Link
 	row := PGS.connect.QueryRow("SELECT long_url, del from public.urls where id = $1", key)
@@ -46,7 +51,7 @@ func (PGS PGLinksStorage) GetShortLink(key string) (models.Link, error) {
 	return link, row.Err()
 }
 
-// ManyPutShortLink добавляем множества значений
+// ManyPutShortLink добавляем множества models.Link
 func (PGS PGLinksStorage) ManyPutShortLink(links []models.Link) error {
 	scope, err := PGS.connect.Begin()
 	if err != nil {
@@ -65,6 +70,7 @@ func (PGS PGLinksStorage) ManyPutShortLink(links []models.Link) error {
 	return scope.Commit()
 }
 
+// GetKey получаем значение ключа по полной ссылке
 func (PGS PGLinksStorage) GetKey(fullURL string) (string, error) {
 	var key string
 	err := PGS.connect.QueryRow("SELECT id FROM public.urls where long_url = $1", fullURL).Scan(&key)
@@ -74,6 +80,7 @@ func (PGS PGLinksStorage) GetKey(fullURL string) (string, error) {
 	return key, nil
 }
 
+// GetShortLinkUser получаем все models.Link который добавил пользователь
 func (PGS PGLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error) {
 	var links []models.Link
 	rows, err := PGS.connect.Query("SELECT id, long_url from public.urls where user_id = $1", UserID)
@@ -90,6 +97,7 @@ func (PGS PGLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error)
 	return links, rows.Err()
 }
 
+// DeleteShortLinkUser удаляем ссылку пользователя
 func (PGS PGLinksStorage) DeleteShortLinkUser(UserID string, keys []string) error {
 	scope, err := PGS.connect.Begin()
 	if err != nil {

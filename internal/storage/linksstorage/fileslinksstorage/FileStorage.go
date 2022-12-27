@@ -122,6 +122,7 @@ func (FS FileLinksStorage) ManyPutShortLink(links []models.Link) error {
 	return nil
 }
 
+// GetKey получение ссылок по ключу
 func (FS FileLinksStorage) GetKey(fullURL string) (string, error) {
 	FS.Connect.mu.RLock()
 	defer FS.Connect.mu.RUnlock()
@@ -155,6 +156,7 @@ func (FS FileLinksStorage) GetKey(fullURL string) (string, error) {
 	return "", constans.ErrorNotFindFullURL
 }
 
+// GetShortLinkUser получаем все models.Link который добавил пользователь
 func (FS FileLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error) {
 	FS.Connect.mu.RLock()
 	defer FS.Connect.mu.RUnlock()
@@ -189,6 +191,7 @@ func (FS FileLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error
 	return linksUser, nil
 }
 
+// DeleteShortLinkUser удаляем ссылку пользователя
 func (FS FileLinksStorage) DeleteShortLinkUser(UserID string, keys []string) error {
 	return nil
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/sarulabs/di"
 )
 
+// BuildContainer собирает в DI контейнер
 func BuildContainer(cfg models.Config) error {
 	var linksStorage linksstorage.LinksStorages
 	if cfg.DataBaseURL != "" {

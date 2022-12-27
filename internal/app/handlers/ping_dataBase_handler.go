@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// PingDataBaseHandler проверяет соедениене с базой данных
 func PingDataBaseHandler(c *gin.Context) {
 	cfg := constans.GlobalContainer.Get("server-config").(models.Config)
 	linkStorage, err := pglinkssotorage.New(cfg.DataBaseURL)
