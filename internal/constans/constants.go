@@ -6,16 +6,13 @@ import (
 	"github.com/sarulabs/di"
 )
 
-// GlobalContainer DI контейнер
+// GlobalContainer DI контейнер для общего доступа к данным
 var GlobalContainer di.Container
 
 const (
-	//CookeSessionName наименование ключа сессии
-	CookeSessionName = "User-session"
-	//CookeUserIDName наименование ключа UserID
-	CookeUserIDName = "UserID"
-	//CookeUserIDLen срез ключа сессии
-	CookeUserIDLen = 16
+	CookeSessionName = "User-session" // Наименование ключа сессии
+	CookeUserIDName  = "UserID"       // Наименование ключа UserID
+	CookeUserIDLen   = 16             // Срез ключа сессии
 )
 
 // GetLinksStorage возвращает  LinksStorages
