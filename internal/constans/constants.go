@@ -9,6 +9,7 @@ import (
 // GlobalContainer DI контейнер для общего доступа к данным
 var GlobalContainer di.Container
 
+// Константы Сессии
 const (
 	CookeSessionName = "User-session" // Наименование ключа сессии
 	CookeUserIDName  = "UserID"       // Наименование ключа UserID

@@ -2,6 +2,7 @@ package constans
 
 import "errors"
 
+// Набор ошибок строкой
 const (
 	//ErrorReadBody ошибка при обработки тела запроса
 	ErrorReadBody = "ошибка при обработки тела запроса"
@@ -25,6 +26,7 @@ const (
 	ErrorGenerateURL = "ошибка генерации ссылки"
 )
 
+// Набор ошибок
 var (
 	// ErrorNotFindFullURL ошибка полная ссылка не найдена
 	ErrorNotFindFullURL = errors.New("ошибка полная ссылка не найдена")

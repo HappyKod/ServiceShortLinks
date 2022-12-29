@@ -7,6 +7,7 @@ import (
 	"sync"
 )
 
+// MemLinksStorage оперативное хранилище
 type MemLinksStorage struct {
 	mu    *sync.RWMutex
 	cache map[string]models.Link

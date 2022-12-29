@@ -18,6 +18,7 @@ type connect struct {
 	mu      *sync.RWMutex
 }
 
+// FileLinksStorage файловое хранилище
 type FileLinksStorage struct {
 	Connect  *connect
 	FileNAME string

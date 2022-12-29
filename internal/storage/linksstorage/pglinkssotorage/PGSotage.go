@@ -7,6 +7,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// PGLinksStorage Postgres хранилище
 type PGLinksStorage struct {
 	connect *sql.DB
 }
