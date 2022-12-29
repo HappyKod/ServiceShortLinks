@@ -7,6 +7,7 @@ import (
 	"sync"
 )
 
+// MemLinksStorage оперативное хранилище
 type MemLinksStorage struct {
 	mu    *sync.RWMutex
 	cache map[string]models.Link
@@ -78,6 +79,7 @@ func (MS MemLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error)
 	return linksUser, nil
 }
 
+// DeleteShortLinkUser удаляем ссылку пользователя
 func (MS MemLinksStorage) DeleteShortLinkUser(UserID string, keys []string) error {
 	for _, key := range keys {
 		MS.mu.Lock()

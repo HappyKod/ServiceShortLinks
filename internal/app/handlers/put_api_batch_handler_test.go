@@ -4,11 +4,12 @@ import (
 	"HappyKod/ServiceShortLinks/internal/app/container"
 	"HappyKod/ServiceShortLinks/internal/models"
 	"bytes"
-	"github.com/go-playground/assert/v2"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"github.com/go-playground/assert/v2"
 )
 
 func TestPutAPIBatchHandler(t *testing.T) {

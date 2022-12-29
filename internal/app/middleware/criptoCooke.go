@@ -8,11 +8,12 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 const errorReadCooke = "ошибка считывания cooke"

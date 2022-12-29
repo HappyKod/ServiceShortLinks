@@ -7,10 +7,12 @@ import (
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/fileslinksstorage"
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/memlinksstorage"
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/pglinkssotorage"
-	"github.com/sarulabs/di"
 	"log"
+
+	"github.com/sarulabs/di"
 )
 
+// BuildContainer собирает в DI контейнер
 func BuildContainer(cfg models.Config) error {
 	var linksStorage linksstorage.LinksStorages
 	if cfg.DataBaseURL != "" {

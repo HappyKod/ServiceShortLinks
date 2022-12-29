@@ -5,11 +5,12 @@ import (
 	"HappyKod/ServiceShortLinks/internal/models"
 	"HappyKod/ServiceShortLinks/utils"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"io"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // PutAPIBatchHandler принимающий в теле запроса множество URL для сокращения в формате:

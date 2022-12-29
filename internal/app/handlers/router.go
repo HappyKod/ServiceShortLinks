@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"HappyKod/ServiceShortLinks/internal/app/middleware"
+
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,6 +11,7 @@ import (
 func Router() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
+	pprof.Register(r)
 	r.Use(middleware.GzipWriter())
 	r.Use(middleware.GzipReader())
 	r.Use(middleware.WorkCooke())

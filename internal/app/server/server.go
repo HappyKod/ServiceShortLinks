@@ -3,9 +3,10 @@ package server
 import (
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"HappyKod/ServiceShortLinks/internal/models"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // NewServer создания сервера с настройками
