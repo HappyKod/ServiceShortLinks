@@ -1,3 +1,4 @@
+// Package myanalyzers обнаружение os.Exit в main функции
 package myanalyzers
 
 import (
@@ -7,9 +8,10 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
+// Doc описание при обнаружении
 const Doc = "обнаружен os.Exit в main функции"
 
-// ExitAnalyzer it is forbidden to use a direct call to os.Exit in the main function of the main package
+// ExitAnalyzer запрещено использовать прямой вызов os.Exit в функции main основного пакет
 var ExitAnalyzer = &analysis.Analyzer{
 	Name: "exit",
 	Doc:  Doc,
