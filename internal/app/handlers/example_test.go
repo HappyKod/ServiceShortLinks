@@ -11,18 +11,18 @@ import (
 )
 
 func ExamplePutHandler() {
-	//Поднимаем Конфигурацию
+	// Поднимаем Конфигурацию
 	cfg := models.Config{}
-	//Поднимаем Контейнер
+	// Поднимаем Контейнер
 	err := container.BuildContainer(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
 	router := Router()
 	w := httptest.NewRecorder()
-	//Создаем запрос
+	// Создаем запрос
 	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte("https://github.com/HappyKod/ServiceShortLinks")))
-	//Совершаем запрос
+	// Совершаем запрос
 	router.ServeHTTP(w, req)
 }
 
