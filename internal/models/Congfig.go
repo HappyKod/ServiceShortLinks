@@ -1,3 +1,4 @@
+// Package models конфигурация приложения
 package models
 
 // Config стартовая конфигурация приложения

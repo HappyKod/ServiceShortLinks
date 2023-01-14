@@ -1,3 +1,4 @@
+// Package models модель сокращенной ссылки
 package models
 
 import "time"

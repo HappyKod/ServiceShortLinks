@@ -1,3 +1,4 @@
+// Package container сборка DI-контейнера
 package container
 
 import (

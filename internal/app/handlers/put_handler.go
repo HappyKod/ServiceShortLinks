@@ -1,3 +1,4 @@
+// Package handlers работа PutAPIHandler возвращает в теле запроса исходный URL
 package handlers
 
 import (

@@ -1,3 +1,4 @@
+// Package memlinksstorage хранилище ссылок в памяти
 package memlinksstorage
 
 import (

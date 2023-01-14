@@ -1,3 +1,4 @@
+// Package middleware работа с cooke пользователя
 package middleware
 
 import (

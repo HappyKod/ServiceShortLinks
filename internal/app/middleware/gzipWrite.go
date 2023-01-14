@@ -1,3 +1,4 @@
+// Package middleware работа со сжатием body
 package middleware
 
 import (

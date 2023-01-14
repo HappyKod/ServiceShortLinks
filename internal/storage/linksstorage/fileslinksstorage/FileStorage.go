@@ -1,3 +1,4 @@
+// Package fileslinksstorage файловое хранилище ссылок
 package fileslinksstorage
 
 import (

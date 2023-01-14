@@ -1,3 +1,4 @@
+// Package server запуск сервера
 package server
 
 import (

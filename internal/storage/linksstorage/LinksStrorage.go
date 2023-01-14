@@ -1,3 +1,4 @@
+// Package linksstorage хранилище ссылок
 package linksstorage
 
 import "HappyKod/ServiceShortLinks/internal/models"

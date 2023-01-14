@@ -1,3 +1,7 @@
+/*
+Package handlers работа PutAPIBatchHandler позволяет загрузить
+множество URL
+*/
 package handlers
 
 import (

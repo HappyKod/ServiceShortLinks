@@ -1,3 +1,4 @@
+// Package handlers указание всех маршрутов хендлеров и подключение middleware
 package handlers
 
 import (
@@ -7,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Router указание маршрутов хендрлеров
+// Router указание маршрутов хендлеров
 func Router() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()

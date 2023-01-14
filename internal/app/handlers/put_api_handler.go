@@ -1,3 +1,4 @@
+// Package handlers работа PutAPIHandler возвращает в теле запроса в формате JSON исходный URL
 package handlers
 
 import (

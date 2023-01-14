@@ -1,3 +1,4 @@
+// Package pglinkssotorage хранилище ссылок а базе данных
 package pglinkssotorage
 
 import (

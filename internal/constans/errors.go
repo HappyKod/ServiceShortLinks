@@ -1,3 +1,4 @@
+// Package constans ошибки проекта
 package constans
 
 import "errors"

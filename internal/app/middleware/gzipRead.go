@@ -1,3 +1,4 @@
+// Package middleware работа с чтением сжатого body
 package middleware
 
 import (

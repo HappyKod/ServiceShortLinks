@@ -1,3 +1,4 @@
+// Package constans константы проекта
 package constans
 
 import (

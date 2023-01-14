@@ -1,3 +1,7 @@
+/*
+Package handlers работа GivUsersLinksHandler возвращает пользователю
+все когда-либо сокращённые им URL
+*/
 package handlers
 
 import (
