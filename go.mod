@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/caarlos0/env/v6 v6.10.1
+	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-playground/assert/v2 v2.0.1
 	github.com/google/uuid v1.3.0
