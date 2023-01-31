@@ -12,10 +12,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/utils"
 
-	"github.com/HappyKod/ServiceShortLinks/internal/constans"
-	"github.com/HappyKod/ServiceShortLinks/utils"
+	"github.com/gin-gonic/gin"
 )
 
 const errorReadCooke = "ошибка считывания cooke"

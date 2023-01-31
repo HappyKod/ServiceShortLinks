@@ -4,12 +4,12 @@ import (
 	"flag"
 	"log"
 
-	"github.com/caarlos0/env/v6"
+	"HappyKod/ServiceShortLinks/internal/app/container"
+	"HappyKod/ServiceShortLinks/internal/app/handlers"
+	"HappyKod/ServiceShortLinks/internal/app/server"
+	"HappyKod/ServiceShortLinks/internal/models"
 
-	"github.com/HappyKod/ServiceShortLinks/internal/app/container"
-	"github.com/HappyKod/ServiceShortLinks/internal/app/handlers"
-	"github.com/HappyKod/ServiceShortLinks/internal/app/server"
-	"github.com/HappyKod/ServiceShortLinks/internal/models"
+	"github.com/caarlos0/env/v6"
 )
 
 var (

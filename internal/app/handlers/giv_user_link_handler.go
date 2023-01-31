@@ -9,10 +9,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/utils"
 
-	"github.com/HappyKod/ServiceShortLinks/internal/constans"
-	"github.com/HappyKod/ServiceShortLinks/utils"
+	"github.com/gin-gonic/gin"
 )
 
 // GivUsersLinksHandler хендлер который сможет вернуть пользователю

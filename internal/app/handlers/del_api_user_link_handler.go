@@ -7,9 +7,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"HappyKod/ServiceShortLinks/internal/constans"
 
-	"github.com/HappyKod/ServiceShortLinks/internal/constans"
+	"github.com/gin-gonic/gin"
 )
 
 // DelUsersLinksHandler принимает список идентификаторов

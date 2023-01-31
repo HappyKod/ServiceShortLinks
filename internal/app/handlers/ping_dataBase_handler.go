@@ -8,11 +8,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/models"
+	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/pglinkssotorage"
 
-	"github.com/HappyKod/ServiceShortLinks/internal/constans"
-	"github.com/HappyKod/ServiceShortLinks/internal/models"
-	"github.com/HappyKod/ServiceShortLinks/internal/storage/linksstorage/pglinkssotorage"
+	"github.com/gin-gonic/gin"
 )
 
 // PingDataBaseHandler проверяет соединение с базой данных.

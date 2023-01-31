@@ -5,11 +5,11 @@ import (
 	"log"
 	"net/http"
 
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/models"
+
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/acme/autocert"
-
-	"github.com/HappyKod/ServiceShortLinks/internal/constans"
-	"github.com/HappyKod/ServiceShortLinks/internal/models"
 )
 
 // NewServer создания сервера с настройками.

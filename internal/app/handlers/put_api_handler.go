@@ -9,13 +9,13 @@ import (
 	"net/http"
 	"time"
 
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/models"
+	"HappyKod/ServiceShortLinks/utils"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgerrcode"
 	"github.com/lib/pq"
-
-	"github.com/HappyKod/ServiceShortLinks/internal/constans"
-	"github.com/HappyKod/ServiceShortLinks/internal/models"
-	"github.com/HappyKod/ServiceShortLinks/utils"
 )
 
 // PutAPIHandler принимает в теле запроса JSON-объект {"url":"<some_url>"}

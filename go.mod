@@ -1,4 +1,4 @@
-module github.com/HappyKod/ServiceShortLinks
+module HappyKod/ServiceShortLinks
 
 go 1.19
 
@@ -12,6 +12,7 @@ require (
 	github.com/lib/pq v1.10.7
 	github.com/quasilyte/go-ruleguard v0.3.18
 	github.com/sarulabs/di v2.0.0+incompatible
+	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
 	golang.org/x/tools v0.5.0
 	honnef.co/go/tools v0.3.3
 )
@@ -33,7 +34,6 @@ require (
 	github.com/quasilyte/gogrep v0.0.0-20220828223005-86e4605de09f // indirect
 	github.com/quasilyte/stdinfo v0.0.0-20220114132959-f7386bf02567 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
-	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
 	golang.org/x/exp/typeparams v0.0.0-20220827204233-334a2380cb91 // indirect
 	golang.org/x/mod v0.7.0 // indirect
 	golang.org/x/net v0.5.0 // indirect

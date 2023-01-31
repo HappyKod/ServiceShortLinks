@@ -2,10 +2,10 @@
 package handlers
 
 import (
+	"HappyKod/ServiceShortLinks/internal/app/middleware"
+
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
-
-	"github.com/HappyKod/ServiceShortLinks/internal/app/middleware"
 )
 
 // Router указание маршрутов хендлеров.

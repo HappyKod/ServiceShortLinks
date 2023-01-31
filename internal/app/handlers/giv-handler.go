@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"HappyKod/ServiceShortLinks/internal/constans"
 
-	"github.com/HappyKod/ServiceShortLinks/internal/constans"
+	"github.com/gin-gonic/gin"
 )
 
 // GivHandler Эндпоинт GET /{id} принимает в качестве URL-параметра идентификатор сокращённого URL

@@ -4,9 +4,9 @@ package pglinkssotorage
 import (
 	"database/sql"
 
-	_ "github.com/lib/pq"
+	"HappyKod/ServiceShortLinks/internal/models"
 
-	"github.com/HappyKod/ServiceShortLinks/internal/models"
+	_ "github.com/lib/pq"
 )
 
 // PGLinksStorage Postgres хранилище.

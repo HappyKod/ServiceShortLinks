@@ -4,7 +4,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/HappyKod/ServiceShortLinks/internal/models"
+	"HappyKod/ServiceShortLinks/internal/models"
 )
 
 func TestMemLinksStorage_GetShortLink(t *testing.T) {

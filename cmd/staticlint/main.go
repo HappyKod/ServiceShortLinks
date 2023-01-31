@@ -3,6 +3,8 @@ package main
 import (
 	"strings"
 
+	"HappyKod/ServiceShortLinks/cmd/staticlint/myanalyzers"
+
 	quasilyte "github.com/quasilyte/go-ruleguard/analyzer"
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/multichecker"
@@ -48,8 +50,6 @@ import (
 	"golang.org/x/tools/go/analysis/passes/unusedwrite"
 	"golang.org/x/tools/go/analysis/passes/usesgenerics"
 	"honnef.co/go/tools/staticcheck"
-
-	"github.com/HappyKod/ServiceShortLinks/cmd/staticlint/myanalyzers"
 )
 
 func main() {

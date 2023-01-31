@@ -5,10 +5,10 @@ import (
 	"net/url"
 	"regexp"
 
-	"github.com/google/uuid"
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/models"
 
-	"github.com/HappyKod/ServiceShortLinks/internal/constans"
-	"github.com/HappyKod/ServiceShortLinks/internal/models"
+	"github.com/google/uuid"
 )
 
 var re = regexp.MustCompile(`(\b(https?)://)?[-A-Za-z0-9+&@#/%?=~_|!:,.;]+\.[-A-Za-z0-9+&@#/%=~_|]+`)

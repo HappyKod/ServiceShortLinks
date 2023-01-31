@@ -6,10 +6,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/go-playground/assert/v2"
+	"HappyKod/ServiceShortLinks/internal/app/container"
+	"HappyKod/ServiceShortLinks/internal/models"
 
-	"github.com/HappyKod/ServiceShortLinks/internal/app/container"
-	"github.com/HappyKod/ServiceShortLinks/internal/models"
+	"github.com/go-playground/assert/v2"
 )
 
 func TestPutHandler(t *testing.T) {

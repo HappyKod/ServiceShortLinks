@@ -5,8 +5,8 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/HappyKod/ServiceShortLinks/internal/constans"
-	"github.com/HappyKod/ServiceShortLinks/internal/models"
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/models"
 )
 
 // MemLinksStorage оперативное хранилище.

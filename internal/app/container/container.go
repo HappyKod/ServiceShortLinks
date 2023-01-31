@@ -4,14 +4,14 @@ package container
 import (
 	"log"
 
-	"github.com/sarulabs/di"
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/models"
+	"HappyKod/ServiceShortLinks/internal/storage/linksstorage"
+	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/fileslinksstorage"
+	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/memlinksstorage"
+	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/pglinkssotorage"
 
-	"github.com/HappyKod/ServiceShortLinks/internal/constans"
-	"github.com/HappyKod/ServiceShortLinks/internal/models"
-	"github.com/HappyKod/ServiceShortLinks/internal/storage/linksstorage"
-	"github.com/HappyKod/ServiceShortLinks/internal/storage/linksstorage/fileslinksstorage"
-	"github.com/HappyKod/ServiceShortLinks/internal/storage/linksstorage/memlinksstorage"
-	"github.com/HappyKod/ServiceShortLinks/internal/storage/linksstorage/pglinkssotorage"
+	"github.com/sarulabs/di"
 )
 
 // BuildContainer собирает в DI контейнер.

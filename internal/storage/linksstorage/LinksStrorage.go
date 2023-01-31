@@ -1,7 +1,7 @@
 // Package linksstorage хранилище ссылок.
 package linksstorage
 
-import "github.com/HappyKod/ServiceShortLinks/internal/models"
+import "HappyKod/ServiceShortLinks/internal/models"
 
 // LinksStorages Набор методов для работы с хранилищем.
 type LinksStorages interface {
