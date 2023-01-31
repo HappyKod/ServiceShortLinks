@@ -8,4 +8,5 @@ type Config struct {
 	FileStoragePATH string `env:"FILE_STORAGE_PATH"`
 	SecretKey       string `env:"SECRET_KEY" envDefault:"https://github.com/HappyKod/ServiceShortLinks"`
 	DataBaseURL     string `env:"DATABASE_DSN"`
+	EnableHTTPS     string `env:"ENABLE_HTTPS"`
 }

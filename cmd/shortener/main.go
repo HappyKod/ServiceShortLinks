@@ -32,6 +32,7 @@ func main() {
 	flag.StringVar(&cfg.BaseURL, "b", cfg.BaseURL, "базовый адрес результирующего сокращённого URL")
 	flag.StringVar(&cfg.FileStoragePATH, "f", cfg.FileStoragePATH, "путь до файла с сокращёнными URL")
 	flag.StringVar(&cfg.DataBaseURL, "d", cfg.DataBaseURL, "строка с адресом подключения к БД")
+	flag.StringVar(&cfg.EnableHTTPS, "s", cfg.EnableHTTPS, "включения HTTPS в веб-сервере")
 	flag.Parse()
 	version()
 	err := container.BuildContainer(cfg)
