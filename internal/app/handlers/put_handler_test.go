@@ -1,13 +1,15 @@
 package handlers
 
 import (
-	"HappyKod/ServiceShortLinks/internal/app/container"
-	"HappyKod/ServiceShortLinks/internal/models"
 	"bytes"
-	"github.com/go-playground/assert/v2"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"HappyKod/ServiceShortLinks/internal/app/container"
+	"HappyKod/ServiceShortLinks/internal/models"
+
+	"github.com/go-playground/assert/v2"
 )
 
 func TestPutHandler(t *testing.T) {

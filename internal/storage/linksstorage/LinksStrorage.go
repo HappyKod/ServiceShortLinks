@@ -1,8 +1,9 @@
+// Package linksstorage хранилище ссылок.
 package linksstorage
 
 import "HappyKod/ServiceShortLinks/internal/models"
 
-// LinksStorages Набор методов для работы с хранилищем
+// LinksStorages Набор методов для работы с хранилищем.
 type LinksStorages interface {
 	Ping() error
 	PutShortLink(key string, link models.Link) error

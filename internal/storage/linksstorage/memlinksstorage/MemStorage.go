@@ -1,37 +1,40 @@
+// Package memlinksstorage хранилище ссылок в памяти.
 package memlinksstorage
 
 import (
-	"HappyKod/ServiceShortLinks/internal/constans"
-	"HappyKod/ServiceShortLinks/internal/models"
 	"errors"
 	"sync"
+
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/models"
 )
 
+// MemLinksStorage оперативное хранилище.
 type MemLinksStorage struct {
 	mu    *sync.RWMutex
 	cache map[string]models.Link
 }
 
-// New инициализация хранилища
+// New инициализация хранилища.
 func New() (*MemLinksStorage, error) {
 	return &MemLinksStorage{
 		cache: make(map[string]models.Link),
 		mu:    new(sync.RWMutex)}, nil
 }
 
-// Ping проверка хранилища
+// Ping проверка хранилища.
 func (MS MemLinksStorage) Ping() error {
 	return nil
 }
 
-// GetShortLink получаем полную ссылку по ключу
+// GetShortLink получаем полную ссылку по ключу.
 func (MS MemLinksStorage) GetShortLink(key string) (models.Link, error) {
 	MS.mu.RLock()
 	defer MS.mu.RUnlock()
 	return MS.cache[key], nil
 }
 
-// PutShortLink добавляем models.Link по ключу
+// PutShortLink добавляем models.Link по ключу.
 func (MS MemLinksStorage) PutShortLink(key string, link models.Link) error {
 	_, err := MS.GetKey(link.FullURL)
 	if !errors.Is(err, constans.ErrorNotFindFullURL) {
@@ -43,7 +46,7 @@ func (MS MemLinksStorage) PutShortLink(key string, link models.Link) error {
 	return nil
 }
 
-// ManyPutShortLink добавляем множества models.Link
+// ManyPutShortLink добавляем множества models.Link.
 func (MS MemLinksStorage) ManyPutShortLink(links []models.Link) error {
 	for _, link := range links {
 		if err := MS.PutShortLink(link.ShortKey, link); err != nil {
@@ -53,7 +56,7 @@ func (MS MemLinksStorage) ManyPutShortLink(links []models.Link) error {
 	return nil
 }
 
-// GetKey получаем значение ключа по полной ссылке
+// GetKey получаем значение ключа по полной ссылке.
 func (MS MemLinksStorage) GetKey(fullURL string) (string, error) {
 	MS.mu.RLock()
 	defer MS.mu.RUnlock()
@@ -65,7 +68,7 @@ func (MS MemLinksStorage) GetKey(fullURL string) (string, error) {
 	return "", constans.ErrorNotFindFullURL
 }
 
-// GetShortLinkUser получаем все models.Link который добавил пользователь
+// GetShortLinkUser получаем все models.Link который добавил пользователь.
 func (MS MemLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error) {
 	MS.mu.RLock()
 	defer MS.mu.RUnlock()
@@ -78,6 +81,7 @@ func (MS MemLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error)
 	return linksUser, nil
 }
 
+// DeleteShortLinkUser удаляем ссылку пользователя.
 func (MS MemLinksStorage) DeleteShortLinkUser(UserID string, keys []string) error {
 	for _, key := range keys {
 		MS.mu.Lock()

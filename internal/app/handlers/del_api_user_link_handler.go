@@ -1,12 +1,15 @@
+// Package handlers работа DelUsersLinksHandler удаление ссылок пользователя.
 package handlers
 
 import (
-	"HappyKod/ServiceShortLinks/internal/constans"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"io"
 	"log"
 	"net/http"
+
+	"HappyKod/ServiceShortLinks/internal/constans"
+
+	"github.com/gin-gonic/gin"
 )
 
 // DelUsersLinksHandler принимает список идентификаторов

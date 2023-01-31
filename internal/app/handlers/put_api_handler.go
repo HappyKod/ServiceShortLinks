@@ -1,18 +1,21 @@
+// Package handlers работа PutAPIHandler возвращает в теле запроса в формате JSON исходный URL.
 package handlers
 
 import (
-	"HappyKod/ServiceShortLinks/internal/constans"
-	"HappyKod/ServiceShortLinks/internal/models"
-	"HappyKod/ServiceShortLinks/utils"
 	"encoding/json"
 	"errors"
-	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgerrcode"
-	"github.com/lib/pq"
 	"io"
 	"log"
 	"net/http"
 	"time"
+
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/internal/models"
+	"HappyKod/ServiceShortLinks/utils"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgerrcode"
+	"github.com/lib/pq"
 )
 
 // PutAPIHandler принимает в теле запроса JSON-объект {"url":"<some_url>"}
