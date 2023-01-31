@@ -15,9 +15,8 @@ type gzipWriter struct {
 	writer *gzip.Writer
 }
 
-// Write запись byte.
+// Write отвечает за gzip-сжатие byte
 func (w gzipWriter) Write(b []byte) (int, error) {
-	// w.Writer будет отвечать за gzip-сжатие byte, поэтому пишем в него
 	return w.writer.Write(b)
 }
 
