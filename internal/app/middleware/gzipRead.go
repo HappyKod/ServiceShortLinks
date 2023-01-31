@@ -1,4 +1,4 @@
-// Package middleware работа с чтением сжатого body
+// Package middleware работа с чтением сжатого body.
 package middleware
 
 import (
@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GzipReader Обработчик gzip сжатия
+// GzipReader Обработчик gzip сжатия.
 func GzipReader() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.Request.Header.Get(`Content-Encoding`) != `gzip` {

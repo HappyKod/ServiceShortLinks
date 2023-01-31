@@ -1,36 +1,37 @@
 package handlers
 
 import (
-	"HappyKod/ServiceShortLinks/internal/app/container"
-	"HappyKod/ServiceShortLinks/internal/constans"
-	"HappyKod/ServiceShortLinks/internal/models"
 	"bytes"
 	"log"
 	"net/http"
 	"net/http/httptest"
+
+	"github.com/HappyKod/ServiceShortLinks/internal/app/container"
+	"github.com/HappyKod/ServiceShortLinks/internal/constans"
+	"github.com/HappyKod/ServiceShortLinks/internal/models"
 )
 
 func ExamplePutHandler() {
-	// Поднимаем Конфигурацию
+	// Поднимаем Конфигурацию.
 	cfg := models.Config{}
-	// Поднимаем Контейнер
+	// Поднимаем Контейнер.
 	err := container.BuildContainer(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
 	router := Router()
 	w := httptest.NewRecorder()
-	// Создаем запрос
+	// Создаем запрос.
 	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte("https://github.com/HappyKod/ServiceShortLinks")))
-	// Совершаем запрос
+	// Совершаем запрос.
 	router.ServeHTTP(w, req)
 }
 
 func ExampleGivHandler() {
-	//Поднимаем Конфигурацию
+	//Поднимаем Конфигурацию.
 	cfg := models.Config{}
 	key := "test1"
-	//Поднимаем Контейнер
+	//Поднимаем Контейнер.
 	err := container.BuildContainer(cfg)
 	if err != nil {
 		log.Fatal(err)
@@ -42,8 +43,8 @@ func ExampleGivHandler() {
 	}
 	router := Router()
 	w := httptest.NewRecorder()
-	//Создаем запрос
+	//Создаем запрос.
 	req := httptest.NewRequest(http.MethodGet, "/"+key, nil)
-	//Совершаем запрос
+	//Совершаем запрос.
 	router.ServeHTTP(w, req)
 }

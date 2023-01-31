@@ -1,10 +1,7 @@
-// Package handlers работа PutAPIHandler возвращает в теле запроса исходный URL
+// Package handlers работа PutAPIHandler возвращает в теле запроса исходный URL.
 package handlers
 
 import (
-	"HappyKod/ServiceShortLinks/internal/constans"
-	"HappyKod/ServiceShortLinks/internal/models"
-	"HappyKod/ServiceShortLinks/utils"
 	"errors"
 	"io"
 	"log"
@@ -14,6 +11,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgerrcode"
 	"github.com/lib/pq"
+
+	"github.com/HappyKod/ServiceShortLinks/internal/constans"
+	"github.com/HappyKod/ServiceShortLinks/internal/models"
+	"github.com/HappyKod/ServiceShortLinks/utils"
 )
 
 // PutHandler принимает в теле запроса строку URL для сокращения и

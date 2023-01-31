@@ -1,14 +1,14 @@
-// Package handlers указание всех маршрутов хендлеров и подключение middleware
+// Package handlers указание всех маршрутов хендлеров и подключение middleware.
 package handlers
 
 import (
-	"HappyKod/ServiceShortLinks/internal/app/middleware"
-
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
+
+	"github.com/HappyKod/ServiceShortLinks/internal/app/middleware"
 )
 
-// Router указание маршрутов хендлеров
+// Router указание маршрутов хендлеров.
 func Router() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()

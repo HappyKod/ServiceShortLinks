@@ -1,20 +1,20 @@
-// Package constans константы проекта
+// Package constans константы проекта.
 package constans
 
 import (
-	"HappyKod/ServiceShortLinks/internal/storage/linksstorage"
-
 	"github.com/sarulabs/di"
+
+	"github.com/HappyKod/ServiceShortLinks/internal/storage/linksstorage"
 )
 
-// GlobalContainer DI контейнер для общего доступа к данным
+// GlobalContainer DI контейнер для общего доступа к данным.
 var GlobalContainer di.Container
 
 // Константы Сессии
 const (
-	CookeSessionName = "User-session" // Наименование ключа сессии
-	CookeUserIDName  = "UserID"       // Наименование ключа UserID
-	CookeUserIDLen   = 16             // Срез ключа сессии
+	CookeSessionName = "User-session" // Наименование ключа сессии.
+	CookeUserIDName  = "UserID"       // Наименование ключа UserID.
+	CookeUserIDLen   = 16             // Срез ключа сессии.
 )
 
 // GetLinksStorage возвращает  LinksStorages

@@ -1,4 +1,4 @@
-module HappyKod/ServiceShortLinks
+module github.com/HappyKod/ServiceShortLinks
 
 go 1.19
 

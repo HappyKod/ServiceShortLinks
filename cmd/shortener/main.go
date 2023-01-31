@@ -1,14 +1,15 @@
 package main
 
 import (
-	"HappyKod/ServiceShortLinks/internal/app/container"
-	"HappyKod/ServiceShortLinks/internal/app/handlers"
-	"HappyKod/ServiceShortLinks/internal/app/server"
-	"HappyKod/ServiceShortLinks/internal/models"
 	"flag"
 	"log"
 
 	"github.com/caarlos0/env/v6"
+
+	"github.com/HappyKod/ServiceShortLinks/internal/app/container"
+	"github.com/HappyKod/ServiceShortLinks/internal/app/handlers"
+	"github.com/HappyKod/ServiceShortLinks/internal/app/server"
+	"github.com/HappyKod/ServiceShortLinks/internal/models"
 )
 
 var (
