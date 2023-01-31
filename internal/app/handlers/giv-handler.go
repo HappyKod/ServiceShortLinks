@@ -1,15 +1,17 @@
+// Package handlers работа GivHandler возвращает оригинальный URL.
 package handlers
 
 import (
-	"HappyKod/ServiceShortLinks/internal/constans"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/HappyKod/ServiceShortLinks/internal/constans"
 )
 
-// GivHandler
-// Эндпоинт GET /{id} принимает в качестве URL-параметра идентификатор сокращённого URL
-// и возвращает ответ с кодом 307 и оригинальным URL в HTTP-заголовке Location
+// GivHandler Эндпоинт GET /{id} принимает в качестве URL-параметра идентификатор сокращённого URL
+// и возвращает ответ с кодом 307 и оригинальным URL в HTTP-заголовке Location.
 func GivHandler(c *gin.Context) {
 	key := c.Param("id")
 	if key == "" {

@@ -1,15 +1,21 @@
+/*
+Package handlers работа PutAPIBatchHandler позволяет загрузить
+множество URL.
+*/
 package handlers
 
 import (
-	"HappyKod/ServiceShortLinks/internal/constans"
-	"HappyKod/ServiceShortLinks/internal/models"
-	"HappyKod/ServiceShortLinks/utils"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"io"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/HappyKod/ServiceShortLinks/internal/constans"
+	"github.com/HappyKod/ServiceShortLinks/internal/models"
+	"github.com/HappyKod/ServiceShortLinks/utils"
 )
 
 // PutAPIBatchHandler принимающий в теле запроса множество URL для сокращения в формате:

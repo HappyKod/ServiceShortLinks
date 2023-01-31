@@ -1,16 +1,20 @@
+// Package container сборка DI-контейнера.
 package container
 
 import (
-	"HappyKod/ServiceShortLinks/internal/constans"
-	"HappyKod/ServiceShortLinks/internal/models"
-	"HappyKod/ServiceShortLinks/internal/storage/linksstorage"
-	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/fileslinksstorage"
-	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/memlinksstorage"
-	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/pglinkssotorage"
-	"github.com/sarulabs/di"
 	"log"
+
+	"github.com/sarulabs/di"
+
+	"github.com/HappyKod/ServiceShortLinks/internal/constans"
+	"github.com/HappyKod/ServiceShortLinks/internal/models"
+	"github.com/HappyKod/ServiceShortLinks/internal/storage/linksstorage"
+	"github.com/HappyKod/ServiceShortLinks/internal/storage/linksstorage/fileslinksstorage"
+	"github.com/HappyKod/ServiceShortLinks/internal/storage/linksstorage/memlinksstorage"
+	"github.com/HappyKod/ServiceShortLinks/internal/storage/linksstorage/pglinkssotorage"
 )
 
+// BuildContainer собирает в DI контейнер.
 func BuildContainer(cfg models.Config) error {
 	var linksStorage linksstorage.LinksStorages
 	if cfg.DataBaseURL != "" {

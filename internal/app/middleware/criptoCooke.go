@@ -1,18 +1,21 @@
+// Package middleware работа с cooke пользователя.
 package middleware
 
 import (
-	"HappyKod/ServiceShortLinks/internal/constans"
-	"HappyKod/ServiceShortLinks/utils"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/HappyKod/ServiceShortLinks/internal/constans"
+	"github.com/HappyKod/ServiceShortLinks/utils"
 )
 
 const errorReadCooke = "ошибка считывания cooke"
@@ -43,7 +46,7 @@ func WorkCooke() gin.HandlerFunc {
 	}
 }
 
-// generateCookie генерируем новую cooke
+// generateCookie генерируем новую cooke.
 func generateCookie(c *gin.Context) {
 	h := hmac.New(sha256.New, constans.GlobalContainer.Get("secret-key").([]byte))
 	userID := []byte(utils.GeneratorStringUUID()[:constans.CookeUserIDLen])
@@ -59,7 +62,7 @@ func generateCookie(c *gin.Context) {
 	c.AddParam(constans.CookeUserIDName, string(userID))
 }
 
-// validCookie проверка cooke
+// validCookie проверка cooke.
 func validCookie(c *gin.Context, cooke string) (bool, error) {
 	data, err := hex.DecodeString(cooke)
 	if err != nil {

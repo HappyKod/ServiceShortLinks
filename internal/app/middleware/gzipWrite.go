@@ -1,11 +1,13 @@
+// Package middleware работа со сжатием body.
 package middleware
 
 import (
 	"compress/gzip"
-	"github.com/gin-gonic/gin"
 	"io"
 	"log"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 type gzipWriter struct {
@@ -13,18 +15,18 @@ type gzipWriter struct {
 	writer *gzip.Writer
 }
 
+// Write отвечает за gzip-сжатие byte
 func (w gzipWriter) Write(b []byte) (int, error) {
-	// w.Writer будет отвечать за gzip-сжатие byte, поэтому пишем в него
 	return w.writer.Write(b)
 }
 
+// WriteString отвечает за gzip-сжатие string
 func (w gzipWriter) WriteString(s string) (int, error) {
-	// w.WriteString будет отвечать за gzip-сжатие string, поэтому пишем в него
 	w.Header().Del("Content-Length")
 	return w.writer.Write([]byte(s))
 }
 
-// GzipWriter Обработчик gzip сжатия
+// GzipWriter Обработчик gzip сжатия.
 func GzipWriter() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if !strings.Contains(c.Request.Header.Get("Accept-Encoding"), "gzip") {
@@ -49,7 +51,7 @@ func GzipWriter() gin.HandlerFunc {
 				}
 			}
 		}()
-		// передаём обработчику страницы переменную типа gzipWriter для вывода данных
+		// передаём обработчику страницы переменную типа gzipWriter для вывода данных.
 		c.Writer = &gzipWriter{c.Writer, gz}
 		c.Writer.Header().Set("Content-Encoding", "gzip")
 		c.Next()

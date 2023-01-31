@@ -1,15 +1,17 @@
 package handlers
 
 import (
-	"HappyKod/ServiceShortLinks/internal/app/container"
-	"HappyKod/ServiceShortLinks/internal/constans"
-	"HappyKod/ServiceShortLinks/internal/models"
 	"errors"
-	"github.com/go-playground/assert/v2"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"github.com/go-playground/assert/v2"
+
+	"github.com/HappyKod/ServiceShortLinks/internal/app/container"
+	"github.com/HappyKod/ServiceShortLinks/internal/constans"
+	"github.com/HappyKod/ServiceShortLinks/internal/models"
 )
 
 // TestGivHandler тест метода GivHandler

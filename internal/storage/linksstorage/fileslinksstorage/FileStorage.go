@@ -1,14 +1,16 @@
+// Package fileslinksstorage файловое хранилище ссылок.
 package fileslinksstorage
 
 import (
-	"HappyKod/ServiceShortLinks/internal/constans"
-	"HappyKod/ServiceShortLinks/internal/models"
 	"bufio"
 	"encoding/json"
 	"errors"
 	"log"
 	"os"
 	"sync"
+
+	"github.com/HappyKod/ServiceShortLinks/internal/constans"
+	"github.com/HappyKod/ServiceShortLinks/internal/models"
 )
 
 type connect struct {
@@ -18,12 +20,13 @@ type connect struct {
 	mu      *sync.RWMutex
 }
 
+// FileLinksStorage файловое хранилище.
 type FileLinksStorage struct {
 	Connect  *connect
 	FileNAME string
 }
 
-// New инициализации хранилища
+// New инициализации хранилища.
 func New(FileNAME string) (*FileLinksStorage, error) {
 	file, err := os.OpenFile(FileNAME, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0777)
 	if err != nil {
@@ -40,7 +43,7 @@ func New(FileNAME string) (*FileLinksStorage, error) {
 	}, nil
 }
 
-// Ping проверка хранилища
+// Ping проверка хранилища.
 func (FS FileLinksStorage) Ping() error {
 	_, err := FS.Connect.file.Stat()
 	if err != nil {
@@ -49,7 +52,7 @@ func (FS FileLinksStorage) Ping() error {
 	return nil
 }
 
-// GetShortLink получаем значение по ключу
+// GetShortLink получаем значение по ключу.
 func (FS FileLinksStorage) GetShortLink(key string) (models.Link, error) {
 	FS.Connect.mu.RLock()
 	defer FS.Connect.mu.RUnlock()
@@ -83,7 +86,7 @@ func (FS FileLinksStorage) GetShortLink(key string) (models.Link, error) {
 	return models.Link{}, nil
 }
 
-// PutShortLink добавляем значение по ключу
+// PutShortLink добавляем значение по ключу.
 func (FS FileLinksStorage) PutShortLink(key string, link models.Link) error {
 	_, err := FS.GetKey(link.FullURL)
 	if !errors.Is(err, constans.ErrorNotFindFullURL) {
@@ -103,7 +106,7 @@ func (FS FileLinksStorage) PutShortLink(key string, link models.Link) error {
 	return nil
 }
 
-// Close закрываем соединение (файл)
+// Close закрываем соединение (файл).
 func (FS FileLinksStorage) Close() error {
 	err := FS.Connect.file.Close()
 	if err != nil {
@@ -112,7 +115,7 @@ func (FS FileLinksStorage) Close() error {
 	return nil
 }
 
-// ManyPutShortLink добавляем множества значений
+// ManyPutShortLink добавляем множества значений.
 func (FS FileLinksStorage) ManyPutShortLink(links []models.Link) error {
 	for _, link := range links {
 		if err := FS.PutShortLink(link.ShortKey, link); err != nil {
@@ -122,6 +125,7 @@ func (FS FileLinksStorage) ManyPutShortLink(links []models.Link) error {
 	return nil
 }
 
+// GetKey получение ссылок по ключу.
 func (FS FileLinksStorage) GetKey(fullURL string) (string, error) {
 	FS.Connect.mu.RLock()
 	defer FS.Connect.mu.RUnlock()
@@ -155,6 +159,7 @@ func (FS FileLinksStorage) GetKey(fullURL string) (string, error) {
 	return "", constans.ErrorNotFindFullURL
 }
 
+// GetShortLinkUser получаем все models.Link который добавил пользователь.
 func (FS FileLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error) {
 	FS.Connect.mu.RLock()
 	defer FS.Connect.mu.RUnlock()
@@ -189,6 +194,7 @@ func (FS FileLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error
 	return linksUser, nil
 }
 
+// DeleteShortLinkUser удаляем ссылку пользователя.
 func (FS FileLinksStorage) DeleteShortLinkUser(UserID string, keys []string) error {
 	return nil
 }

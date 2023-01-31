@@ -1,8 +1,9 @@
 package container
 
 import (
-	"HappyKod/ServiceShortLinks/internal/models"
 	"testing"
+
+	"github.com/HappyKod/ServiceShortLinks/internal/models"
 )
 
 func TestBuildContainer(t *testing.T) {
