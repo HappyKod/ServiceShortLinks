@@ -3,7 +3,7 @@ package models
 
 // Config стартовая конфигурация приложения.
 type Config struct {
-	AddressHttp     string `env:"SERVER_ADDRESS" envDefault:"localhost:8080" json:"server_address"`
+	AddressHTTP     string `env:"SERVER_ADDRESS" envDefault:"localhost:8080" json:"server_address"`
 	AddressProto    string `env:"SERVER_ADDRESS_PROTO" envDefault:"localhost:3200" json:"server_address_proto"`
 	BaseURL         string `env:"BASE_URL" envDefault:"http://localhost:8080" json:"base_url"`
 	FileStoragePATH string `env:"FILE_STORAGE_PATH" json:"file_storage_path"`

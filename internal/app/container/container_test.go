@@ -19,7 +19,7 @@ func TestBuildContainer(t *testing.T) {
 			name: "Запуск контейнера с локальным хранилищем",
 			args: args{
 				cfg: models.Config{
-					AddressHttp:     "localhost:8080",
+					AddressHTTP:     "localhost:8080",
 					BaseURL:         "http://localhost:8080",
 					FileStoragePATH: "",
 				},
@@ -29,7 +29,7 @@ func TestBuildContainer(t *testing.T) {
 			name: "Запуск контейнера с файловым хранилищем",
 			args: args{
 				cfg: models.Config{
-					AddressHttp:     "localhost:8080",
+					AddressHTTP:     "localhost:8080",
 					BaseURL:         "http://localhost:8080",
 					FileStoragePATH: "file.json",
 				},

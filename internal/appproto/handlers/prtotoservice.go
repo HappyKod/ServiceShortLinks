@@ -33,7 +33,7 @@ func (s *LinksService) PutLink(ctx context.Context, in *pb.PutLinkRequest) (*pb.
 	var cooke string
 	if md, ok := metadata.FromIncomingContext(ctx); ok {
 		userID = md.Get(constans.CookeUserIDName)[0]
-		userID = md.Get(constans.CookeSessionName)[0]
+		cooke = md.Get(constans.CookeSessionName)[0]
 	} else {
 		log.Println(errorReadUserID)
 		return nil, status.Error(codes.Unauthenticated, errorReadUserID)

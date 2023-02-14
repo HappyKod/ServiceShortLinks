@@ -15,6 +15,7 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/test/bufconn"
@@ -62,7 +63,7 @@ func TestLinksService_PutLink(t *testing.T) {
 	}
 	md := metadata.New(map[string]string{constans.CookeSessionName: "39636466363139662d326137632d3439463dede60c4a8829edda83bfd46dc019add7966c028655357a1e086706157be8"})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	conn, err := grpc.DialContext(ctx, "", grpc.WithInsecure(), grpc.WithContextDialer(dialer()))
+	conn, err := grpc.DialContext(ctx, "", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithContextDialer(dialer()))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -98,12 +99,12 @@ func TestLinksService_PutBatchLink(t *testing.T) {
 	tests := []struct {
 		name    string
 		errCode codes.Code
-		link    pb.BatchLink
+		link    *pb.BatchLink
 	}{
 		{
 			"Получаем ошибку при генерации ссылки",
 			codes.InvalidArgument,
-			pb.BatchLink{
+			&pb.BatchLink{
 				Link: "111",
 				Id:   "1",
 			},
@@ -111,7 +112,7 @@ func TestLinksService_PutBatchLink(t *testing.T) {
 		{
 			"Генерируем валидную ссылку",
 			codes.OK,
-			pb.BatchLink{
+			&pb.BatchLink{
 				Link: "https://www.google.com",
 				Id:   "1",
 			},
@@ -123,7 +124,7 @@ func TestLinksService_PutBatchLink(t *testing.T) {
 		log.Fatal("ошибка инициализации контейнера", err)
 	}
 	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithInsecure(), grpc.WithContextDialer(dialer()))
+	conn, err := grpc.DialContext(ctx, "", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithContextDialer(dialer()))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -137,7 +138,7 @@ func TestLinksService_PutBatchLink(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			request := &pb.PutBatchLinkRequest{
-				BatchLink: []*pb.BatchLink{&tt.link},
+				BatchLink: []*pb.BatchLink{tt.link},
 			}
 			response, errPutLink := client.PutBatchLink(ctx, request)
 			if response != nil {
@@ -170,7 +171,7 @@ func TestLinksService_PingDataBase(t *testing.T) {
 		log.Fatal("ошибка инициализации контейнера", err)
 	}
 	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithInsecure(), grpc.WithContextDialer(dialer()))
+	conn, err := grpc.DialContext(ctx, "", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithContextDialer(dialer()))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -222,7 +223,7 @@ func TestLinksService_GivLink(t *testing.T) {
 		log.Fatal("ошибка инициализации контейнера", err)
 	}
 	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithInsecure(), grpc.WithContextDialer(dialer()))
+	conn, err := grpc.DialContext(ctx, "", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithContextDialer(dialer()))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -278,7 +279,7 @@ func TestLinksService_GivUserLinks(t *testing.T) {
 	}
 	md := metadata.New(map[string]string{constans.CookeSessionName: "39636466363139662d326137632d3439463dede60c4a8829edda83bfd46dc019add7966c028655357a1e086706157be8"})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	conn, err := grpc.DialContext(ctx, "", grpc.WithInsecure(), grpc.WithContextDialer(dialer()))
+	conn, err := grpc.DialContext(ctx, "", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithContextDialer(dialer()))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -332,7 +333,7 @@ func TestLinksService_DelUserLinks(t *testing.T) {
 	}
 	md := metadata.New(map[string]string{constans.CookeSessionName: "39636466363139662d326137632d3439463dede60c4a8829edda83bfd46dc019add7966c028655357a1e086706157be8"})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	conn, err := grpc.DialContext(ctx, "", grpc.WithInsecure(), grpc.WithContextDialer(dialer()))
+	conn, err := grpc.DialContext(ctx, "", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithContextDialer(dialer()))
 	if err != nil {
 		t.Fatal(err)
 	}

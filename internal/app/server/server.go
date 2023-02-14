@@ -25,7 +25,7 @@ func NewServer(r *gin.Engine) {
 	cfg := constans.GlobalContainer.Get("server-config").(models.Config)
 	server := http.Server{
 		Handler: r,
-		Addr:    cfg.AddressHttp,
+		Addr:    cfg.AddressHTTP,
 	}
 	go func() {
 		if cfg.EnableHTTPS != "" {

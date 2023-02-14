@@ -32,7 +32,7 @@ func main() {
 	if err := env.Parse(&cfg); err != nil {
 		log.Fatal(err, "Ошибка считывания конфига")
 	}
-	flag.StringVar(&cfg.AddressHttp, "a", cfg.AddressHttp, "адрес запуска HTTP-сервера")
+	flag.StringVar(&cfg.AddressHTTP, "a", cfg.AddressHTTP, "адрес запуска HTTP-сервера")
 	flag.StringVar(&cfg.BaseURL, "b", cfg.BaseURL, "базовый адрес результирующего сокращённого URL")
 	flag.StringVar(&cfg.FileStoragePATH, "f", cfg.FileStoragePATH, "путь до файла с сокращёнными URL")
 	flag.StringVar(&cfg.DataBaseURL, "d", cfg.DataBaseURL, "строка с адресом подключения к БД")
