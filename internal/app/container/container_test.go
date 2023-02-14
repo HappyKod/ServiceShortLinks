@@ -1,8 +1,9 @@
 package container
 
 import (
-	"HappyKod/ServiceShortLinks/internal/models"
 	"testing"
+
+	"HappyKod/ServiceShortLinks/internal/models"
 )
 
 func TestBuildContainer(t *testing.T) {
@@ -18,7 +19,7 @@ func TestBuildContainer(t *testing.T) {
 			name: "Запуск контейнера с локальным хранилищем",
 			args: args{
 				cfg: models.Config{
-					Address:         "localhost:8080",
+					AddressHttp:     "localhost:8080",
 					BaseURL:         "http://localhost:8080",
 					FileStoragePATH: "",
 				},
@@ -28,7 +29,7 @@ func TestBuildContainer(t *testing.T) {
 			name: "Запуск контейнера с файловым хранилищем",
 			args: args{
 				cfg: models.Config{
-					Address:         "localhost:8080",
+					AddressHttp:     "localhost:8080",
 					BaseURL:         "http://localhost:8080",
 					FileStoragePATH: "file.json",
 				},

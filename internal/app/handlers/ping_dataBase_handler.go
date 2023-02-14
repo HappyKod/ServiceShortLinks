@@ -1,14 +1,21 @@
+/*
+Package handlers работа PingDataBaseHandler
+проверяет соединение с базой данных.
+*/
 package handlers
 
 import (
+	"log"
+	"net/http"
+
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"HappyKod/ServiceShortLinks/internal/models"
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/pglinkssotorage"
+
 	"github.com/gin-gonic/gin"
-	"log"
-	"net/http"
 )
 
+// PingDataBaseHandler проверяет соединение с базой данных.
 func PingDataBaseHandler(c *gin.Context) {
 	cfg := constans.GlobalContainer.Get("server-config").(models.Config)
 	linkStorage, err := pglinkssotorage.New(cfg.DataBaseURL)

@@ -1,17 +1,23 @@
+// Package container сборка DI-контейнера.
 package container
 
 import (
+	"log"
+	"net"
+
 	"HappyKod/ServiceShortLinks/internal/constans"
 	"HappyKod/ServiceShortLinks/internal/models"
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage"
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/fileslinksstorage"
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/memlinksstorage"
 	"HappyKod/ServiceShortLinks/internal/storage/linksstorage/pglinkssotorage"
+
 	"github.com/sarulabs/di"
-	"log"
 )
 
+// BuildContainer собирает в DI контейнер.
 func BuildContainer(cfg models.Config) error {
+	var workIPNet *net.IPNet
 	var linksStorage linksstorage.LinksStorages
 	if cfg.DataBaseURL != "" {
 		store, err := pglinkssotorage.New(cfg.DataBaseURL)
@@ -39,6 +45,14 @@ func BuildContainer(cfg models.Config) error {
 	if err != nil {
 		return err
 	}
+
+	if cfg.TrustedSubnet != "" {
+		_, ipNet, cidrErr := net.ParseCIDR(cfg.TrustedSubnet)
+		if cidrErr != nil {
+			log.Fatal(cidrErr)
+		}
+		workIPNet = ipNet
+	}
 	builder, _ := di.NewBuilder()
 	if err := builder.Add(di.Def{
 		Name:  "linksstorage",
@@ -53,6 +67,11 @@ func BuildContainer(cfg models.Config) error {
 	if err := builder.Add(di.Def{
 		Name:  "secret-key",
 		Build: func(ctn di.Container) (interface{}, error) { return []byte(cfg.SecretKey), nil }}); err != nil {
+		return err
+	}
+	if err := builder.Add(di.Def{
+		Name:  "ip-net",
+		Build: func(ctn di.Container) (interface{}, error) { return workIPNet, nil }}); err != nil {
 		return err
 	}
 	constans.GlobalContainer = builder.Build()
