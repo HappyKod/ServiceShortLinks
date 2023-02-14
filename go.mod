@@ -14,6 +14,8 @@ require (
 	github.com/sarulabs/di v2.0.0+incompatible
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
 	golang.org/x/tools v0.5.0
+	google.golang.org/grpc v1.53.0
+	google.golang.org/protobuf v1.28.1
 	honnef.co/go/tools v0.3.3
 )
 
@@ -25,6 +27,7 @@ require (
 	github.com/go-toolsmith/astcopy v1.0.2 // indirect
 	github.com/go-toolsmith/astequal v1.0.3 // indirect
 	github.com/goccy/go-json v0.9.7 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
@@ -39,6 +42,6 @@ require (
 	golang.org/x/net v0.5.0 // indirect
 	golang.org/x/sys v0.4.0 // indirect
 	golang.org/x/text v0.6.0 // indirect
-	google.golang.org/protobuf v1.28.0 // indirect
+	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

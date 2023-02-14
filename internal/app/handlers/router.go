@@ -25,6 +25,7 @@ func Router() *gin.Engine {
 		groupAPI.DELETE("/user/urls", DelUsersLinksHandler)
 		groupAPI.POST("/shorten", PutAPIHandler)
 		groupAPI.POST("/shorten/batch", PutAPIBatchHandler)
+		groupAPI.GET("/internal/stats", GetStat)
 
 	}
 	return r

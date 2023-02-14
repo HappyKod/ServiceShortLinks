@@ -18,8 +18,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const errorReadCooke = "ошибка считывания cooke"
-const errorValidCooke = "ошибка валидации cooke"
+const ErrorReadCooke = "ошибка считывания cooke"
+const ErrorValidCooke = "ошибка валидации cooke"
 
 // WorkCooke Обработчик cooke
 func WorkCooke() gin.HandlerFunc {
@@ -27,8 +27,8 @@ func WorkCooke() gin.HandlerFunc {
 		cookie, err := c.Cookie(constans.CookeSessionName)
 		if err != nil {
 			if !strings.EqualFold(err.Error(), http.ErrNoCookie.Error()) {
-				log.Println(errorReadCooke, err)
-				http.Error(c.Writer, errorReadCooke, http.StatusBadGateway)
+				log.Println(ErrorReadCooke, err)
+				http.Error(c.Writer, ErrorReadCooke, http.StatusBadGateway)
 				return
 			}
 			generateCookie(c)
@@ -37,7 +37,7 @@ func WorkCooke() gin.HandlerFunc {
 		}
 		valid, err := validCookie(c, cookie)
 		if err != nil {
-			log.Println(errorValidCooke, cookie, err)
+			log.Println(ErrorValidCooke, cookie, err)
 		}
 		if !valid {
 			generateCookie(c)

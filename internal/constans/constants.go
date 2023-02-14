@@ -2,9 +2,9 @@
 package constans
 
 import (
-	"HappyKod/ServiceShortLinks/internal/storage/linksstorage"
-
 	"github.com/sarulabs/di"
+
+	"HappyKod/ServiceShortLinks/internal/storage/linksstorage"
 )
 
 // GlobalContainer DI контейнер для общего доступа к данным.

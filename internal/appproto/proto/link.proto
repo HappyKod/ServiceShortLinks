@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package appproto;
+
+option go_package = "HappyKod/ServiceShortLinks/internal/appproto";
+
+message BatchLink{
+  string id = 1; // идентификатор
+  string link = 2; // ссылка
+}
+
+message Links{
+  string short_uri = 1; // короткая ссылка
+  string full_uri = 2; // полная ссылка ссылка
+}
+
+message PutLinkRequest{
+  string link = 1; // ссылка начальная
+}
+
+message PutLinkResponse{
+  string short_link = 1; // ссылка сокращенная
+  string cooke = 2; // токен сессии пользователя
+  string error = 3; // ошибка
+
+}
+
+message PutBatchLinkRequest{
+  repeated BatchLink batchLink = 1; // ссылка начальная
+
+}
+
+message PutBatchLinkResponse{
+  repeated BatchLink batchLink = 1; // ссылка сокращенная
+  string cooke = 2; // токен сессии пользователя
+  string error = 3; // ошибка
+}
+
+message PingDataBaseRequest{
+}
+
+message PingDataBaseResponse{
+  string cooke = 1; // токен сессии пользователя
+  string error = 2; // ошибка
+}
+
+message GivLinkRequest{
+  string link = 1; // сокращенная ссылка
+}
+
+message GivLinkResponse{
+  string link = 1; // начальная ссылка
+  string cooke = 2; // токен сессии пользователя
+  string error = 3; // ошибка
+}
+
+message GivUserLinksRequest{
+
+}
+
+message GivUserLinksResponse{
+  repeated Links links = 1; // сокращенная ссылка
+  string cooke = 2; // токен сессии пользователя
+  string error = 3; // ошибка
+}
+
+message DelUserLinksRequest{
+  repeated string links = 1; // сокращенная ссылка
+}
+
+message DelUserLinksResponse{
+  string cooke = 1; // токен сессии пользователя
+  string error = 2; // ошибка
+}
+
+message StatRequest{
+}
+
+message StatResponse{
+  int32 countUser = 1; // кол-во пользователей
+  int32 countLinks = 2; // кол-во ссылок
+  string error = 3; // ошибка
+}
+
+
+
+service LinksService {
+  rpc PutLink(PutLinkRequest) returns (PutLinkResponse);
+  rpc PutBatchLink(PutBatchLinkRequest) returns (PutBatchLinkResponse);
+  rpc PingDataBase(PingDataBaseRequest) returns (PingDataBaseResponse);
+  rpc GivLink(GivLinkRequest) returns (GivLinkResponse);
+  rpc GivUserLinks(GivUserLinksRequest) returns (GivUserLinksResponse);
+  rpc DelUserLinks(DelUserLinksRequest) returns (DelUserLinksResponse);
+  rpc Stat(StatRequest) returns (StatResponse);
+}

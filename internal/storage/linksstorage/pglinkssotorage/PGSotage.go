@@ -4,9 +4,9 @@ package pglinkssotorage
 import (
 	"database/sql"
 
-	"HappyKod/ServiceShortLinks/internal/models"
-
 	_ "github.com/lib/pq"
+
+	"HappyKod/ServiceShortLinks/internal/models"
 )
 
 // PGLinksStorage Postgres хранилище.
@@ -117,4 +117,19 @@ func (PGS PGLinksStorage) DeleteShortLinkUser(UserID string, keys []string) erro
 		}
 	}
 	return scope.Commit()
+}
+
+// Stat получаем статистику.
+func (PGS PGLinksStorage) Stat() (int, int, error) {
+	var user int
+	var link int
+	err := PGS.connect.QueryRow("SELECT count(DISTINCT (user_id)) public.urls").Scan(&user)
+	if err != nil {
+		return 0, 0, err
+	}
+	err = PGS.connect.QueryRow("SELECT count(DISTINCT (long_url)) public.urls").Scan(&link)
+	if err != nil {
+		return 0, 0, err
+	}
+	return user, link, nil
 }

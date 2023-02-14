@@ -94,3 +94,8 @@ func (MS MemLinksStorage) DeleteShortLinkUser(UserID string, keys []string) erro
 	}
 	return nil
 }
+
+// Stat получаем статистику.
+func (MS MemLinksStorage) Stat() (int, int, error) {
+	return 0, 0, nil
+}

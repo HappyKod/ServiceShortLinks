@@ -195,6 +195,11 @@ func (FS FileLinksStorage) GetShortLinkUser(UserID string) ([]models.Link, error
 }
 
 // DeleteShortLinkUser удаляем ссылку пользователя.
-func (FS FileLinksStorage) DeleteShortLinkUser(UserID string, keys []string) error {
+func (FS FileLinksStorage) DeleteShortLinkUser(_ string, _ []string) error {
 	return nil
+}
+
+// Stat получаем статистику.
+func (FS FileLinksStorage) Stat() (int, int, error) {
+	return 0, 0, nil
 }

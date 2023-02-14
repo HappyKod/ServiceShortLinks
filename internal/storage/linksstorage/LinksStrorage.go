@@ -12,4 +12,5 @@ type LinksStorages interface {
 	GetKey(fullURL string) (string, error)
 	GetShortLinkUser(UserID string) ([]models.Link, error)
 	DeleteShortLinkUser(UserID string, links []string) error
+	Stat() (int, int, error)
 }
