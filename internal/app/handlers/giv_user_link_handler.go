@@ -1,12 +1,18 @@
+/*
+Package handlers работа GivUsersLinksHandler возвращает пользователю
+все когда-либо сокращённые им URL.
+*/
 package handlers
 
 import (
-	"HappyKod/ServiceShortLinks/internal/constans"
-	"HappyKod/ServiceShortLinks/utils"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+
+	"HappyKod/ServiceShortLinks/internal/constans"
+	"HappyKod/ServiceShortLinks/utils"
+
+	"github.com/gin-gonic/gin"
 )
 
 // GivUsersLinksHandler хендлер который сможет вернуть пользователю
