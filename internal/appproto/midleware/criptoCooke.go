@@ -19,6 +19,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// WorkCooke работа с cooke пользователя.
 func WorkCooke(ctx context.Context, req interface{}, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	userID, userCooke := generateCookie()
 	md, _ := metadata.FromIncomingContext(ctx)

@@ -11,6 +11,7 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
+	"testing"
 )
 
 const (
@@ -1237,4 +1238,8 @@ func file_internal_appproto_proto_link_proto_init() {
 	file_internal_appproto_proto_link_proto_rawDesc = nil
 	file_internal_appproto_proto_link_proto_goTypes = nil
 	file_internal_appproto_proto_link_proto_depIdxs = nil
+}
+
+func Test_Empty(t *testing.T) {
+	t.Skip()
 }

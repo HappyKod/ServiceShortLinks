@@ -8,6 +8,8 @@ package appproto
 
 import (
 	context "context"
+	"testing"
+
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -318,4 +320,8 @@ var LinksService_ServiceDesc = grpc.ServiceDesc{
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "internal/appproto/proto/link.proto",
+}
+
+func Test_Empty1(t *testing.T) {
+	t.Skip()
 }

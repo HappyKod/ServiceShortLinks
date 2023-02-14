@@ -18,8 +18,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const ErrorReadCooke = "ошибка считывания cooke"
-const ErrorValidCooke = "ошибка валидации cooke"
+// Константы ошибок.
+const (
+	//ErrorReadCooke ошибка считывания cooke
+	ErrorReadCooke = "ошибка считывания cooke"
+	//ErrorValidCooke ошибка валидации cooke
+	ErrorValidCooke = "ошибка валидации cooke"
+)
 
 // WorkCooke Обработчик cooke
 func WorkCooke() gin.HandlerFunc {
